@@ -25,7 +25,12 @@ class Play extends Phaser.Scene {
   }
 
   update() {
-    // Move the player left and right
+    this.player_input();
+
+  }
+
+  player_input() {
+    // Move the player up
     if (keyW.isDown) {
       this.tweens.add({
         targets: [this.player],
@@ -36,6 +41,8 @@ class Play extends Phaser.Scene {
         loop: false,
       });
     }
+    
+    // Move the player down
     if (keyS.isDown) {
       this.tweens.add({
         targets: [this.player],
@@ -47,7 +54,7 @@ class Play extends Phaser.Scene {
       });
     }
 
-    // Move the player up and down
+    // Move the player left
     if (keyA.isDown) {
       this.tweens.add({
         targets: [this.player],
@@ -58,6 +65,8 @@ class Play extends Phaser.Scene {
         loop: false,
       });
     }
+
+    // Move the player right
     if (keyD.isDown) {
       this.tweens.add({
         targets: [this.player],
@@ -68,6 +77,7 @@ class Play extends Phaser.Scene {
         loop: false,
       });
     }
+
   }
 
 }
