@@ -25,7 +25,10 @@ class Play extends Phaser.Scene {
   }
 
   update() {
-    this.player_input();
+    console.log(this.player.x);
+    if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
+      this.player_input();
+    }
 
   }
 
