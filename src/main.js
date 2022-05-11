@@ -5,11 +5,17 @@
 'use strict';
 let config = {
   type: Phaser.CANVAS,
-  width: 1080,
-  height: 720,
-  scene: [Menu, Play, GameOver],
+  width: 640,
+  height: 640,
+  physics: {
+    default: 'arcade',
+    arcade: {
+        debug: false,
+    }
+},
+  scene: [Play],
 };
 
-let cursors, keyR, keyESC;
+let keyW, keyA, keyS, keyD;
 
 let game = new Phaser.Game(config);
