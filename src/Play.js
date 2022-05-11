@@ -10,10 +10,11 @@ class Play extends Phaser.Scene {
 
   create() {
     // Create background
-    this.add.image(0, 0, 'background_img').setOrigin(0, 0);
+    this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
 
     // Create the player sprite
-    this.player = this.physics.add.sprite(3 * game.config.width/4, 550, 'player_sprite');
+    this.player = this.physics.add.sprite(0, 0, 'player_sprite');
+    this.player.setCollideWorldBounds(true);
 
     // Adding keyboard controls
     keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -26,18 +27,46 @@ class Play extends Phaser.Scene {
   update() {
     // Move the player left and right
     if (keyW.isDown) {
-      this.player.y -= 1;
+      this.tweens.add({
+        targets: [this.player],
+        y: this.player.y - 32,
+        duration: 100,
+        ease: 'Power1',
+        yoyo: false,
+        loop: false,
+      });
     }
     if (keyS.isDown) {
-      this.player.y += 1;
+      this.tweens.add({
+        targets: [this.player],
+        y: this.player.y + 32,
+        duration: 100,
+        ease: 'Power1',
+        yoyo: false,
+        loop: false,
+      });
     }
 
     // Move the player up and down
     if (keyA.isDown) {
-      this.player.x -= 1;
+      this.tweens.add({
+        targets: [this.player],
+        x: this.player.x - 32,
+        duration: 100,
+        ease: 'Power1',
+        yoyo: false,
+        loop: false,
+      });
     }
     if (keyD.isDown) {
-      this.player.x += 1;
+      this.tweens.add({
+        targets: [this.player],
+        x: this.player.x + 32,
+        duration: 100,
+        ease: 'Power1',
+        yoyo: false,
+        loop: false,
+      });
     }
   }
 
