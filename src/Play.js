@@ -39,9 +39,7 @@ class Play extends Phaser.Scene {
         targets: [this.player],
         y: this.player.y - 32,
         duration: 100,
-        ease: 'Power1',
-        yoyo: false,
-        loop: false,
+        ease: 'Power1'
       });
     }
     
@@ -51,9 +49,7 @@ class Play extends Phaser.Scene {
         targets: [this.player],
         y: this.player.y + 32,
         duration: 100,
-        ease: 'Power1',
-        yoyo: false,
-        loop: false,
+        ease: 'Power1'
       });
     }
 
@@ -63,9 +59,7 @@ class Play extends Phaser.Scene {
         targets: [this.player],
         x: this.player.x - 32,
         duration: 100,
-        ease: 'Power1',
-        yoyo: false,
-        loop: false,
+        ease: 'Power1'
       });
     }
 
@@ -75,9 +69,7 @@ class Play extends Phaser.Scene {
         targets: [this.player],
         x: this.player.x + 32,
         duration: 100,
-        ease: 'Power1',
-        yoyo: false,
-        loop: false,
+        ease: 'Power1'
       });
     }
 
