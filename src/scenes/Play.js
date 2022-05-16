@@ -68,6 +68,8 @@ class Play extends Phaser.Scene {
 
     // Load sfx
     this.steps_sfx = this.sound.add('footsteps').setLoop(false);
+
+    
   }
 
   update() {
@@ -88,6 +90,10 @@ class Play extends Phaser.Scene {
 
     if (keyESC.isDown) {
         this.scene.start('menuScene')
+    }
+
+    if (this.block.x == this.target.x && this.block.y == this.target.y){
+      this.scene.start('level2');
     }
   }
 
