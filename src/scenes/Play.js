@@ -22,6 +22,7 @@ class Play extends Phaser.Scene {
     // Create the player sprite
     this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0, 0);
     this.player.setCollideWorldBounds(true);
+    this.player.grab = false
     
     // String to save user input for direction
     this.pos = "";
@@ -71,7 +72,9 @@ class Play extends Phaser.Scene {
     }
 
     // If shift key is held down, player can move block
-    if (keySHIFT.isDown) {
+    if (keySHIFT.isDown && (Math.abs(this.player.x - this.block.x) < 32 || Math.abs(this.player.y - this.block.y) < 32)) {
+        //can put grab animation in here
+        this.player.grab = true
         this.box_collision();
     }
 
@@ -149,12 +152,25 @@ class Play extends Phaser.Scene {
   }
 
   box_collision() {
-    // Checking if player is above block, and if down is pressed then move block down
+    // Checking if player is above block, 
     if (this.block.y == this.player.y + 32 && this.block.x == this.player.x) {
+      
+      //if down is pressed then move block down
       if (this.pos == "down") {
         this.tweens.add({
           targets: [this.block],
           y: this.block.y + 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+
+      //if up is pressed pull the block up
+      if (this.pos == "up") {
+        this.tweens.add({
+          targets: [this.block],
+          y: this.block.y - 32,
           duration: 100,
           ease: 'Power1'
         });
@@ -173,10 +189,23 @@ class Play extends Phaser.Scene {
         });
         this.pos = "";
       }
+
+      //if down is pressed then move block down
+      if (this.pos == "down") {
+        this.tweens.add({
+          targets: [this.block],
+          y: this.block.y + 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
     }
 
-    // Checking if player is to the left of the block, and if right is pressed then move block right
+    // Checking if player is to the left of the block 
     if (this.block.x == this.player.x + 32 && this.block.y == this.player.y) {
+      
+      //if right is pressed then move block right
       if (this.pos == "right") {
         this.tweens.add({
           targets: [this.block],
@@ -186,14 +215,38 @@ class Play extends Phaser.Scene {
         });
         this.pos = "";
       }
-    }
 
-    // Checking if player is to the right of the block, and if left is pressed then move block left
-    if (this.block.x == this.player.x - 32 && this.block.y == this.player.y) {
+      //if left is pressed then pull block left
       if (this.pos == "left") {
         this.tweens.add({
           targets: [this.block],
           x: this.block.x - 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+    }
+
+    // Checking if player is to the right of the block
+    if (this.block.x == this.player.x - 32 && this.block.y == this.player.y) {
+     
+      //if left is pressed then move block left
+      if (this.pos == "left") {
+        this.tweens.add({
+          targets: [this.block],
+          x: this.block.x - 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+
+      //if right is pressed then pull the block right
+      if (this.pos == "right") {
+        this.tweens.add({
+          targets: [this.block],
+          x: this.block.x + 32,
           duration: 100,
           ease: 'Power1'
         });
