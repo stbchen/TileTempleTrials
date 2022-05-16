@@ -22,10 +22,10 @@ class Play extends Phaser.Scene {
     // Create the block sprite
     this.block = this.physics.add.image(32, 32, 'block_img').setOrigin(0, 0);
     this.block.setCollideWorldBounds(true);
+    this.block.immovable = true;
 
     // Add controls
     this.addControls();
-
     // Add collision bewteen player and block
     // this.physics.add.collider(this.player, this.block,() => {});
 
@@ -37,7 +37,11 @@ class Play extends Phaser.Scene {
       this.player_input();
     }
 
+    // If shift key is held down, player can move block
+    if (keySHIFT.isDown) {
     this.box_collision();
+    }
+
   }
 
   player_input() {
@@ -93,6 +97,7 @@ class Play extends Phaser.Scene {
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    keySHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
   }
 
   box_collision() {
