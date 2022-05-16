@@ -21,6 +21,11 @@ class Play extends Phaser.Scene {
     // Create background
     this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
 
+    //Create target block
+    this.target = this.physics.add.image(576, 160, 'target').setOrigin(0, 0);
+    this.target.setCollideWorldBounds(true);
+    this.target.immovable = true;
+
     // Create the player sprite
     this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0, 0);
     this.player.setCollideWorldBounds(true);
@@ -28,11 +33,6 @@ class Play extends Phaser.Scene {
     
     // String to save user input for direction
     this.pos = "";
-
-    //Create target block
-    this.target = this.physics.add.image(576, 160, 'target').setOrigin(0, 0);
-    this.target.setCollideWorldBounds(true);
-    this.target.immovable = true;
 
     // Create the block sprite
     this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0);
