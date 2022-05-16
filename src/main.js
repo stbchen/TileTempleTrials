@@ -13,7 +13,7 @@ let config = {
         debug: false,
     }
 },
-  scene: [Menu, Play],
+  scene: [Menu, Play,Level2],
 };
 
 let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC;
