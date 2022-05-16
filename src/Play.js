@@ -16,15 +16,15 @@ class Play extends Phaser.Scene {
     // Create the player sprite
     this.player = this.physics.add.sprite(0, 0, 'player_sprite').setOrigin(0, 0);
     this.player.setCollideWorldBounds(true);
+    
+    // String to save user input for direction
+    this.pos = "";
 
     // Create the block sprite
     this.block = this.physics.add.image(32, 32, 'block_img').setOrigin(0, 0);
     this.block.setCollideWorldBounds(true);
-    this.block.setBounce(1);
-    this.block.setVelocity(-200, 60);
+    this.block.immovable = true;
 
-
-    this.playerBlockCollison();
 
     // Add controls
     this.addControls();
@@ -32,9 +32,14 @@ class Play extends Phaser.Scene {
   }
 
   update() {
-    console.log(this.player.x);
+    // Checking if player is in tile, then call input function
     if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
       this.player_input();
+    }
+
+    // If shift key is held down, player can move block
+    if (keySHIFT.isDown) {
+    this.box_collision();
     }
 
   }
@@ -48,6 +53,7 @@ class Play extends Phaser.Scene {
         duration: 100,
         ease: 'Power1'
       });
+      this.pos = "up";
     }
     
     // Move the player down
@@ -58,6 +64,7 @@ class Play extends Phaser.Scene {
         duration: 100,
         ease: 'Power1'
       });
+      this.pos = "down";
     }
 
     // Move the player left
@@ -68,6 +75,7 @@ class Play extends Phaser.Scene {
         duration: 100,
         ease: 'Power1'
       });
+      this.pos = "left";
     }
 
     // Move the player right
@@ -78,7 +86,9 @@ class Play extends Phaser.Scene {
         duration: 100,
         ease: 'Power1'
       });
+      this.pos = "right";
     }
+
 
   }
 
@@ -88,9 +98,67 @@ class Play extends Phaser.Scene {
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    keySHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
   }
 
   playerBlockCollison() {
     this.physics.add.collider(this.player, this.block);
+  }
+
+  box_collision() {
+    console.log("player x: " + this.player.x + " player y: " + this.player.y);
+    console.log("block x: " + this.block.x + " block y: " + this.block.y);
+
+    // Checking if player is above block, and if down is pressed then move block down
+    if (this.block.y == this.player.y + 32 && this.block.x == this.player.x) {
+      if (this.pos == "down") {
+        this.tweens.add({
+          targets: [this.block],
+          y: this.block.y + 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+    }
+
+    // Checking if player is below block, and if up is pressed then move block up
+    if (this.block.y == this.player.y - 32 && this.block.x == this.player.x) {
+      if (this.pos == "up") {
+        this.tweens.add({
+          targets: [this.block],
+          y: this.block.y - 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+    }
+
+    // Checking if player is to the left of the block, and if right is pressed then move block right
+    if (this.block.x == this.player.x + 32 && this.block.y == this.player.y) {
+      if (this.pos == "right") {
+        this.tweens.add({
+          targets: [this.block],
+          x: this.block.x + 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+    }
+
+    // Checking if player is to the right of the block, and if left is pressed then move block left
+    if (this.block.x == this.player.x - 32 && this.block.y == this.player.y) {
+      if (this.pos == "left") {
+        this.tweens.add({
+          targets: [this.block],
+          x: this.block.x - 32,
+          duration: 100,
+          ease: 'Power1'
+        });
+        this.pos = "";
+      }
+    }
   }
 }
