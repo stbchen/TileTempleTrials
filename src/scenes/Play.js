@@ -72,7 +72,7 @@ class Play extends Phaser.Scene {
     }
 
     // If shift key is held down, player can move block
-    if (keySHIFT.isDown && (Math.abs(this.player.x - this.block.x) < 32 || Math.abs(this.player.y - this.block.y) < 32)) {
+    if (keySHIFT.isDown && (Math.abs(this.player.x - this.block.x) < 20 || Math.abs(this.player.y - this.block.y) < 20)) {
         //can put grab animation in here
         this.player.grab = true
         this.box_collision();
