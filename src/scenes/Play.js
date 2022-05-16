@@ -88,11 +88,15 @@ class Play extends Phaser.Scene {
         this.box_collision();
     }
 
+
+    //go back to main menu
     if (keyESC.isDown) {
         this.scene.start('menuScene')
     }
 
+    //check whether you have won or not
     if (this.block.x == this.target.x && this.block.y == this.target.y){
+      this.delay = this.time.now + 3000;
       this.scene.start('level2');
     }
   }
