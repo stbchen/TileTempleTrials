@@ -13,7 +13,7 @@ let config = {
         debug: false,
     }
 },
-  scene: [Play],
+  scene: [Play,Menu],
 };
 
 let keyW, keyA, keyS, keyD;
