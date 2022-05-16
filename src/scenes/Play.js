@@ -11,8 +11,8 @@ class Play extends Phaser.Scene {
     this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
     this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
 
-    this.load.audio('footsteps', './assets/Footsteps.wav');
-    this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
+    this.load.audio('footsteps', './assets/FootstepsPush.wav');
+    //this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
   }
 
   create() {
@@ -20,17 +20,18 @@ class Play extends Phaser.Scene {
     this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
 
     // Create the player sprite
-    this.player = this.physics.add.sprite(0, 0, 'player_walk').setOrigin(0, 0);
+    this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0, 0);
     this.player.setCollideWorldBounds(true);
     
     // String to save user input for direction
     this.pos = "";
 
     // Create the block sprite
-    this.block = this.physics.add.image(32, 32, 'block_img').setOrigin(0, 0);
+    this.block = this.physics.add.image(64, 64, 'block_img').setOrigin(0, 0);
     this.block.setCollideWorldBounds(true);
     this.block.immovable = true;
 
+    this.add.text(10, 10, 'Use WASD to move\nHold SHIFT while moving to push block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
     // Add controls
     keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -38,6 +39,7 @@ class Play extends Phaser.Scene {
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     keySHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+    keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
 
     // Player animations
@@ -56,7 +58,7 @@ class Play extends Phaser.Scene {
     this.player.anims.play('idle');
 
     // Load sfx
-    this.steps_sfx = this.sound.add('footsteps');
+    this.steps_sfx = this.sound.add('footsteps').setLoop(false);
   }
 
   update() {
@@ -73,8 +75,9 @@ class Play extends Phaser.Scene {
         this.box_collision();
     }
 
-
-
+    if (keyESC.isDown) {
+        this.scene.start('menuScene')
+    }
   }
 
   player_input() {

@@ -16,6 +16,6 @@ let config = {
   scene: [Menu, Play],
 };
 
-let keyW, keyA, keyS, keyD, keySHIFT, keyENTER;
+let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC;
 
 let game = new Phaser.Game(config);
