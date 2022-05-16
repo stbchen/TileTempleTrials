@@ -19,6 +19,7 @@ class Level2 extends Phaser.Scene {
     
       create() {
         // Create background
+        console.log()
         this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
     
         // Create the player sprite
