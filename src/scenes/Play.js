@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
   preload() {
     this.load.image('player_sprite', './assets/player.png');
-    this.load.image('background_img', './assets/background.png');
+    this.load.image('floor1', './assets/floor1.png');
     this.load.image('block_off', './assets/block_off.png');
     this.load.image('block_on', './assets/block_on.png');
     this.load.image('target', './assets/target.png');
@@ -19,7 +19,7 @@ class Play extends Phaser.Scene {
 
   create() {
     // Create background
-    this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
+    this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor1').setOrigin(0, 0);
 
     //Create target block
     this.target = this.physics.add.image(576, 160, 'target').setOrigin(0, 0);
