@@ -97,7 +97,7 @@ class Level2 extends Phaser.Scene {
       //check whether you have won or not
       if (this.block.x == this.target.x && this.block.y == this.target.y){
         this.delay = this.time.now + 3000;
-        this.scene.start('level2');
+        this.scene.start('playScene');
       }
     }
   

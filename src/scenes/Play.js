@@ -4,11 +4,12 @@ class Play extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('player_sprite', './assets/player.png');
+    this.load.image('player_sprite', './assets/PlayerSprite64.png');
     this.load.image('background_img', './assets/background.png');
     this.load.image('block_off', './assets/block_off.png');
     this.load.image('block_on', './assets/block_on.png');
     this.load.image('target', './assets/target.png');
+    this.load.image('wall', './assets/block.png');
 
     this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
     this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
@@ -22,20 +23,25 @@ class Play extends Phaser.Scene {
     this.add.tileSprite(0, 0, game.config.width, game.config.height, 'background_img').setOrigin(0, 0);
 
     //Create target block
-    this.target = this.physics.add.image(576, 160, 'target').setOrigin(0, 0);
+    this.target = this.physics.add.image(32*Phaser.Math.Between(6, 18), 32*Phaser.Math.Between(1, 7), 'target').setOrigin(0);
     this.target.setCollideWorldBounds(true);
     this.target.immovable = true;
 
     // Create the player sprite
-    this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0.2, 0.5).setScale(1.5);
+    this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0.25, 0.5);
+    this.player.setSize(32, 32).setOffset(16, 32);
     this.player.setCollideWorldBounds(true);
     this.player.grab = false
+
+    // Walls
+    this.wall = this.physics.add.image(96, 64, 'wall').setOrigin(0);
     
     // String to save user input for direction
     this.pos = "";
 
     // Create the block sprite
-    this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33);
+    this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
+    this.block.setSize(32, 32).setOffset(0, 16);
     this.block.setCollideWorldBounds(true);
     this.block.immovable = true;
 
@@ -50,21 +56,20 @@ class Play extends Phaser.Scene {
     keySHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
-
     // Player animations
-    this.anims.create({
-        key: 'idle',
-        frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 0, first: 0}),
-        frameRate: 1,
-        repeat: -1
-    })
-    this.anims.create({
-        key: 'walk',
-        frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 1, first: 0}),
-        frameRate: 12,
-        repeat: -1
-    })
-    this.player.anims.play('idle');
+    // this.anims.create({
+    //     key: 'idle',
+    //     frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 0, first: 0}),
+    //     frameRate: 1,
+    //     repeat: -1
+    // })
+    // this.anims.create({
+    //     key: 'walk',
+    //     frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 1, first: 0}),
+    //     frameRate: 12,
+    //     repeat: -1
+    // })
+    //this.player.anims.play('idle');
 
     // Load sfx
     this.steps_sfx = this.sound.add('footsteps').setLoop(false);
@@ -77,7 +82,7 @@ class Play extends Phaser.Scene {
     if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
       this.player_input();
     } else {
-        this.player.anims.play('idle');
+        //this.player.anims.play('idle');
         //this.steps_sfx.stop();
     }
 
@@ -96,17 +101,19 @@ class Play extends Phaser.Scene {
 
     //check whether you have won or not
     if (this.block.x == this.target.x && this.block.y == this.target.y){
-      this.delay = this.time.now + 3000;
-      this.scene.start('level2');
+      this.block.setTexture('block_on').setOrigin(0);
+      this.time.delayedCall(3000, () => {
+          this.scene.restart();
+      })
     }
   }
 
   player_input() {
     // Move the player up
     if (keyW.isDown) {
-        if (this.player.anims.currentAnim.key != 'walk') {
-            this.player.anims.play('walk');
-        }
+        // if (this.player.anims.currentAnim.key != 'walk') {
+        //     this.player.anims.play('walk');
+        // }
         this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
@@ -119,9 +126,9 @@ class Play extends Phaser.Scene {
     
     // Move the player down
     if (keyS.isDown) {
-        if (this.player.anims.currentAnim.key != 'walk') {
-            this.player.anims.play('walk');
-        }
+        // if (this.player.anims.currentAnim.key != 'walk') {
+        //     this.player.anims.play('walk');
+        // }
         this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
@@ -134,9 +141,9 @@ class Play extends Phaser.Scene {
 
     // Move the player left
     if (keyA.isDown) {
-        if (this.player.anims.currentAnim.key != 'walk') {
-            this.player.anims.play('walk');
-        }
+        // if (this.player.anims.currentAnim.key != 'walk') {
+        //     this.player.anims.play('walk');
+        // }
         this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
@@ -149,9 +156,9 @@ class Play extends Phaser.Scene {
 
     // Move the player right
     if (keyD.isDown) {
-        if (this.player.anims.currentAnim.key != 'walk') {
-            this.player.anims.play('walk');
-        }
+        // if (this.player.anims.currentAnim.key != 'walk') {
+        //     this.player.anims.play('walk');
+        // }
         this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
