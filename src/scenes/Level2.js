@@ -39,7 +39,7 @@ class Level2 extends Phaser.Scene {
       this.block.setCollideWorldBounds(true);
       this.block.immovable = true;
   
-      this.add.text(10, 10, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
+      this.add.text(10, 10, 'You beat level 1 YAY!\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
   
   
       // Add controls
