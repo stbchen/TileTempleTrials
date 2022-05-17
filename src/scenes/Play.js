@@ -103,7 +103,8 @@ class Play extends Phaser.Scene {
 
     //check whether you have won or not
     if (this.block.x == this.target.x && this.block.y == this.target.y){
-      this.block.setTexture('block_on').setOrigin(0);
+      this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
+      this.block.destroy();
       this.time.delayedCall(3000, () => {
           this.scene.restart();
       })
