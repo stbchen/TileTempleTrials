@@ -16,8 +16,8 @@ class Play extends Phaser.Scene {
     this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
     this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
 
-    this.load.audio('footsteps', './assets/FootstepsPush.wav');
-    //this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
+    this.load.audio('footsteps', './assets/Footsteps.wav');
+    this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
   }
 
   create() {
@@ -75,41 +75,43 @@ class Play extends Phaser.Scene {
 
     // Load sfx
     this.steps_sfx = this.sound.add('footsteps').setLoop(false);
+    this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);
 
     
   }
 
-  update() {
-    // Checking if player is in tile, then call input function
-    if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
-      this.player_input();
-    } else {
-        //this.player.anims.play('idle');
-        //this.steps_sfx.stop();
-    }
+    update() {
+        // Checking if player is in tile, then call input function
+        if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
+            this.player_input();
+        } else {
+            //this.player.anims.play('idle');
+            //this.steps_sfx.stop();
+        }
+        // If shift key is held down, player can move block
+        if (keySHIFT.isDown && (
+            Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
+            Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
+            //can put grab animation in here
+            this.player.grab = true;
+        } else {
+            this.player.grab = false;
+        }
 
-    // If shift key is held down, player can move block
-    if (keySHIFT.isDown && (Math.abs(this.player.x - this.block.x) < 20 || Math.abs(this.player.y - this.block.y) < 20)) {
-        //can put grab animation in here
-        this.player.grab = true
-        this.box_collision();
-    }
+        //go back to main menu
+        if (keyESC.isDown) {
+            this.scene.start('menuScene')
+        }
 
-
-    //go back to main menu
-    if (keyESC.isDown) {
-        this.scene.start('menuScene')
+        //check whether you have won or not
+        if (this.block.x == this.target.x && this.block.y == this.target.y){
+            this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
+            this.block.destroy();
+            this.time.delayedCall(3000, () => {
+                this.scene.restart();
+            })
+        }
     }
-
-    //check whether you have won or not
-    if (this.block.x == this.target.x && this.block.y == this.target.y){
-      this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
-      this.block.destroy();
-      this.time.delayedCall(3000, () => {
-          this.scene.restart();
-      })
-    }
-  }
 
   player_input() {
     // Move the player up
@@ -117,14 +119,25 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.steps_sfx.play();
-        this.tweens.add({
+        this.tweens.add ({
             targets: [this.player],
             y: this.player.y - 32,
             duration: 100,
             ease: 'Power1'
         });
         this.pos = "up";
+
+        if (this.player.grab) {
+            this.steps_push_sfx.play();
+            this.tweens.add ({
+                targets: [this.block],
+                y: this.block.y - 32,
+                duration: 100,
+                ease: 'Power1'
+            });
+        } else {
+            this.steps_sfx.play();
+        }
     }
     
     // Move the player down
@@ -132,7 +145,6 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
             y: this.player.y + 32,
@@ -140,6 +152,18 @@ class Play extends Phaser.Scene {
             ease: 'Power1'
         });
         this.pos = "down";
+
+        if (this.player.grab) {
+            this.steps_push_sfx.play();
+            this.tweens.add ({
+                targets: [this.block],
+                y: this.block.y + 32,
+                duration: 100,
+                ease: 'Power1'
+            });
+        } else {
+            this.steps_sfx.play();
+        }
     }
 
     // Move the player left
@@ -147,7 +171,6 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
             x: this.player.x - 32,
@@ -155,6 +178,18 @@ class Play extends Phaser.Scene {
             ease: 'Power1'
         });
         this.pos = "left";
+
+        if (this.player.grab) {
+            this.steps_push_sfx.play();
+            this.tweens.add ({
+                targets: [this.block],
+                x: this.block.x - 32,
+                duration: 100,
+                ease: 'Power1'
+            });
+        } else {
+            this.steps_sfx.play();
+        }
     }
 
     // Move the player right
@@ -162,7 +197,6 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.steps_sfx.play();
         this.tweens.add({
             targets: [this.player],
             x: this.player.x + 32,
@@ -170,116 +204,18 @@ class Play extends Phaser.Scene {
             ease: 'Power1'
         });
         this.pos = "right";
-    }
 
-
-  }
-
-  playerBlockCollison() {
-    this.physics.add.collider(this.player, this.block);
-  }
-
-  box_collision() {
-    // Checking if player is above block, 
-    if (this.block.y == this.player.y + 32 && this.block.x == this.player.x) {
-      
-      //if down is pressed then move block down
-      if (this.pos == "down") {
-        this.tweens.add({
-          targets: [this.block],
-          y: this.block.y + 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-
-      //if up is pressed pull the block up
-      if (this.pos == "up") {
-        this.tweens.add({
-          targets: [this.block],
-          y: this.block.y - 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-    }
-
-    // Checking if player is below block, and if up is pressed then move block up
-    if (this.block.y == this.player.y - 32 && this.block.x == this.player.x) {
-      if (this.pos == "up") {
-        this.tweens.add({
-          targets: [this.block],
-          y: this.block.y - 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-
-      //if down is pressed then move block down
-      if (this.pos == "down") {
-        this.tweens.add({
-          targets: [this.block],
-          y: this.block.y + 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-    }
-
-    // Checking if player is to the left of the block 
-    if (this.block.x == this.player.x + 32 && this.block.y == this.player.y) {
-      
-      //if right is pressed then move block right
-      if (this.pos == "right") {
-        this.tweens.add({
-          targets: [this.block],
-          x: this.block.x + 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-
-      //if left is pressed then pull block left
-      if (this.pos == "left") {
-        this.tweens.add({
-          targets: [this.block],
-          x: this.block.x - 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-    }
-
-    // Checking if player is to the right of the block
-    if (this.block.x == this.player.x - 32 && this.block.y == this.player.y) {
-     
-      //if left is pressed then move block left
-      if (this.pos == "left") {
-        this.tweens.add({
-          targets: [this.block],
-          x: this.block.x - 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
-
-      //if right is pressed then pull the block right
-      if (this.pos == "right") {
-        this.tweens.add({
-          targets: [this.block],
-          x: this.block.x + 32,
-          duration: 100,
-          ease: 'Power1'
-        });
-        this.pos = "";
-      }
+        if (this.player.grab) {
+            this.steps_push_sfx.play();
+            this.tweens.add ({
+                targets: [this.block],
+                x: this.block.x + 32,
+                duration: 100,
+                ease: 'Power1'
+            });
+        } else {
+            this.steps_sfx.play();
+        }
     }
   }
 }
