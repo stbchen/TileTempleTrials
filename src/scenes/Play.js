@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
   preload() {
     this.load.image('player_sprite', './assets/player.png');
-    this.load.image('background_img', './assets/floor1.png');
+    this.load.image('background_img', './assets/background.png');
     this.load.image('block_off', './assets/block_off.png');
     this.load.image('block_on', './assets/block_on.png');
     this.load.image('target', './assets/target.png');
@@ -27,7 +27,7 @@ class Play extends Phaser.Scene {
     this.target.immovable = true;
 
     // Create the player sprite
-    this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0, 0);
+    this.player = this.physics.add.sprite(32, 64, 'player_walk').setOrigin(0.2, 0.5).setScale(1.5);
     this.player.setCollideWorldBounds(true);
     this.player.grab = false
     
@@ -35,11 +35,11 @@ class Play extends Phaser.Scene {
     this.pos = "";
 
     // Create the block sprite
-    this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0);
+    this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33);
     this.block.setCollideWorldBounds(true);
     this.block.immovable = true;
 
-    this.add.text(10, 10, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
+    this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
 
     // Add controls
