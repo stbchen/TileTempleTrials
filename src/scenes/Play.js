@@ -4,10 +4,10 @@ class Play extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('player_sprite', './assets/PlayerSprite64.png');
+    this.load.image('player_sprite', './assets/PlayerResize.png');
     this.load.image('background_img', './assets/background.png');
     this.load.image('player_sprite', './assets/player.png');
-    this.load.image('floor1', './assets/floor1.png');
+    this.load.image('floor1', './assets/background.png');
     this.load.image('block_off', './assets/block_off.png');
     this.load.image('block_on', './assets/block_on.png');
     this.load.image('target', './assets/target.png');
@@ -30,8 +30,8 @@ class Play extends Phaser.Scene {
     this.target.immovable = true;
 
     // Create the player sprite
-    this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0.25, 0.5);
-    this.player.setSize(32, 32).setOffset(16, 32);
+    this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0, 0.5);
+    this.player.setSize(32, 32).setOffset(0, 32);
     this.player.setCollideWorldBounds(true);
     this.player.grab = false
 
