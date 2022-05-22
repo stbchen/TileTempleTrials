@@ -21,6 +21,16 @@ class Play extends Phaser.Scene {
   }
 
   create() {
+    // Physics from Nathan Altice's MovementStudies repo
+    // variables and settings
+    this.ACCELERATION = 200;
+    this.MAX_X_VEL = 250;   // pixels/second
+    this.MAX_Y_VEL = 250;
+    this.DRAG = 250;    // DRAG < ACCELERATION = icy slide
+    this.physics.world.gravity.y = 2600;
+    //this.physics.world.gravity.x = 2600;
+
+
     // Create background
     this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor1').setOrigin(0, 0);
 
@@ -33,7 +43,8 @@ class Play extends Phaser.Scene {
     this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0, 0.5);
     this.player.setSize(32, 32).setOffset(0, 32);
     this.player.setCollideWorldBounds(true);
-    this.player.grab = false
+    this.player.grab = false;
+    this.player.setMaxVelocity(this.MAX_X_VEL, this.MAX_Y_VEL);
 
     // Walls
     this.wall = this.physics.add.image(96, 64, 'wall').setOrigin(0);
@@ -46,7 +57,7 @@ class Play extends Phaser.Scene {
     this.block.setSize(32, 32).setOffset(0, 16);
     this.block.setCollideWorldBounds(true);
     this.block.immovable = true;
-
+    this.physics.add.collider(this.player, this.block);
     this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
 
@@ -82,21 +93,31 @@ class Play extends Phaser.Scene {
 
     update() {
         // Checking if player is in tile, then call input function
-        if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
-            this.player_input();
-        } else {
-            //this.player.anims.play('idle');
-            //this.steps_sfx.stop();
-        }
-        // If shift key is held down, player can move block
-        if (keySHIFT.isDown && (
-            Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
-            Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
-            //can put grab animation in here
-            this.player.grab = true;
-        } else {
-            this.player.grab = false;
-        }
+        //if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
+        this.player_input();
+        this.player.body.setDragX(this.DRAG);
+        this.player.body.setDragY(this.DRAG);
+
+
+
+        // } else {
+        //     console.log("y: " + this.player.y + " temp: " + (this.temp - 32));
+        //     if (this.player.y == this.temp - 32 && this.pos == "up") {
+        //         console.log("sad");
+        //         this.player.setVelocityY(0);
+        //     }
+        //     //this.player.anims.play('idle');
+        //     //this.steps_sfx.stop();
+        // }
+        // // If shift key is held down, player can move block
+        // if (keySHIFT.isDown && (
+        //     Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
+        //     Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
+        //     //can put grab animation in here
+        //     this.player.grab = true;
+        // } else {
+        //     this.player.grab = false;
+        // }
 
         //go back to main menu
         if (keyESC.isDown) {
@@ -119,14 +140,18 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.tweens.add ({
-            targets: [this.player],
-            y: this.player.y - 32,
-            duration: 100,
-            ease: 'Power1'
-        });
-        this.pos = "up";
 
+        // this.tweens.add ({
+        //     targets: [this.player],
+        //     y: this.player.y - 32,
+        //     duration: 100,
+        //     ease: 'Power1'
+        // });
+        this.temp = this.player.y;
+        this.player.body.setAccelerationY(-this.ACCELERATION);
+
+        this.pos = "up";
+        console.log("sadklsajdlas");
         if (this.player.grab) {
             this.steps_push_sfx.play();
             this.tweens.add ({
@@ -141,16 +166,18 @@ class Play extends Phaser.Scene {
     }
     
     // Move the player down
-    if (keyS.isDown) {
+    else if (keyS.isDown) {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.tweens.add({
-            targets: [this.player],
-            y: this.player.y + 32,
-            duration: 100,
-            ease: 'Power1'
-        });
+        this.player.body.setAccelerationY(this.ACCELERATION);
+
+        // this.tweens.add({
+        //     targets: [this.player],
+        //     y: this.player.y + 32,
+        //     duration: 100,
+        //     ease: 'Power1'
+        // });
         this.pos = "down";
 
         if (this.player.grab) {
@@ -167,16 +194,18 @@ class Play extends Phaser.Scene {
     }
 
     // Move the player left
-    if (keyA.isDown) {
+    else if (keyA.isDown) {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.tweens.add({
-            targets: [this.player],
-            x: this.player.x - 32,
-            duration: 100,
-            ease: 'Power1'
-        });
+        this.player.body.setAccelerationX(-this.ACCELERATION);
+
+        // this.tweens.add({
+        //     targets: [this.player],
+        //     x: this.player.x - 32,
+        //     duration: 100,
+        //     ease: 'Power1'
+        // });
         this.pos = "left";
 
         if (this.player.grab) {
@@ -193,16 +222,17 @@ class Play extends Phaser.Scene {
     }
 
     // Move the player right
-    if (keyD.isDown) {
+    else if (keyD.isDown) {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.tweens.add({
-            targets: [this.player],
-            x: this.player.x + 32,
-            duration: 100,
-            ease: 'Power1'
-        });
+        this.player.body.setAccelerationX(this.ACCELERATION);
+        // this.tweens.add({
+        //     targets: [this.player],
+        //     x: this.player.x + 32,
+        //     duration: 100,
+        //     ease: 'Power1'
+        // });
         this.pos = "right";
 
         if (this.player.grab) {
@@ -216,6 +246,10 @@ class Play extends Phaser.Scene {
         } else {
             this.steps_sfx.play();
         }
+    }
+    else {
+        this.player.body.setAccelerationX(0);
+        this.player.body.setDragX(this.DRAG);
     }
   }
 }
