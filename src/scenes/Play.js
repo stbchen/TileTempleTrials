@@ -18,16 +18,18 @@ class Play extends Phaser.Scene {
 
     this.load.audio('footsteps', './assets/Footsteps.wav');
     this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
+
+    //this.load.scenePlugin('GridPhysics', 'https://raw.githubusercontent.com/nkholski/phaser-grid-physics/master/dist/GridPhysics.min.js', 'gridphysics', 'gridphysics');
   }
 
   create() {
     // Physics from Nathan Altice's MovementStudies repo
     // variables and settings
-    this.ACCELERATION = 200;
+    this.ACCELERATION = 500;
     this.MAX_X_VEL = 250;   // pixels/second
     this.MAX_Y_VEL = 250;
-    this.DRAG = 250;    // DRAG < ACCELERATION = icy slide
-    this.physics.world.gravity.y = 2600;
+    this.DRAG = 700;    // DRAG < ACCELERATION = icy slide
+    //this.physics.world.gravity.y = 2600;
     //this.physics.world.gravity.x = 2600;
 
 
@@ -45,6 +47,8 @@ class Play extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.player.grab = false;
     this.player.setMaxVelocity(this.MAX_X_VEL, this.MAX_Y_VEL);
+    // this.player.body.setFrictionX(10000);
+    // this.player.body.setFrictionY(10000);
 
     // Walls
     this.wall = this.physics.add.image(96, 64, 'wall').setOrigin(0);
@@ -57,6 +61,9 @@ class Play extends Phaser.Scene {
     this.block.setSize(32, 32).setOffset(0, 16);
     this.block.setCollideWorldBounds(true);
     this.block.immovable = true;
+    // this.block.setFrictionX(10000);
+    // this.block.setFrictionY(10000);
+
     this.physics.add.collider(this.player, this.block);
     this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
@@ -97,7 +104,8 @@ class Play extends Phaser.Scene {
         this.player_input();
         this.player.body.setDragX(this.DRAG);
         this.player.body.setDragY(this.DRAG);
-
+        this.block.body.setDragX(this.DRAG);
+        this.block.body.setDragY(this.DRAG);
 
 
         // } else {
@@ -109,15 +117,15 @@ class Play extends Phaser.Scene {
         //     //this.player.anims.play('idle');
         //     //this.steps_sfx.stop();
         // }
-        // // If shift key is held down, player can move block
-        // if (keySHIFT.isDown && (
-        //     Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
-        //     Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
-        //     //can put grab animation in here
-        //     this.player.grab = true;
-        // } else {
-        //     this.player.grab = false;
-        // }
+        // If shift key is held down, player can move block
+        if (keySHIFT.isDown && (
+            Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
+            Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
+            //can put grab animation in here
+            this.player.grab = true;
+        } else {
+            this.player.grab = false;
+        }
 
         //go back to main menu
         if (keyESC.isDown) {
@@ -148,7 +156,7 @@ class Play extends Phaser.Scene {
         //     ease: 'Power1'
         // });
         this.temp = this.player.y;
-        this.player.body.setAccelerationY(-this.ACCELERATION);
+        this.player.body.setVelocityY(-this.ACCELERATION);
 
         this.pos = "up";
         console.log("sadklsajdlas");
@@ -170,7 +178,7 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.player.body.setAccelerationY(this.ACCELERATION);
+        this.player.body.setVelocityY(this.ACCELERATION);
 
         // this.tweens.add({
         //     targets: [this.player],
@@ -198,7 +206,7 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.player.body.setAccelerationX(-this.ACCELERATION);
+        this.player.body.setVelocityX(-this.ACCELERATION);
 
         // this.tweens.add({
         //     targets: [this.player],
@@ -226,7 +234,7 @@ class Play extends Phaser.Scene {
         // if (this.player.anims.currentAnim.key != 'walk') {
         //     this.player.anims.play('walk');
         // }
-        this.player.body.setAccelerationX(this.ACCELERATION);
+        this.player.body.setVelocityX(this.ACCELERATION);
         // this.tweens.add({
         //     targets: [this.player],
         //     x: this.player.x + 32,
