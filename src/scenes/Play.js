@@ -24,6 +24,15 @@ class Play extends Phaser.Scene {
         // Create background
         this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor1').setOrigin(0, 0);
 
+        // Walls
+        this.walls = this.physics.add.group();
+        for (var i = 0; i < game.config.width; i += 32) {
+            this.walls.add(this.physics.add.image(i, 0, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
+        }
+        // this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        // this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        // this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+
         //Create target block
         this.target = this.physics.add.image(32*Phaser.Math.Between(6, 18), 32*Phaser.Math.Between(1, 7), 'target').setOrigin(0);
         this.target.setCollideWorldBounds(true);
@@ -35,17 +44,14 @@ class Play extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
         this.player.grab = false
 
-        // Walls
-        this.walls = this.physics.add.group();
-        this.walls.add(this.physics.add.image(96, 128, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(160, 128, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(128, 160, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-
         // Create the block sprite
         this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
         this.block.setSize(32, 32).setOffset(0, 16);
         this.block.setCollideWorldBounds(true);
-        //this.block.immovable = true;
+
+        for (var i = 0; i < game.config.width; i += 32) {
+            this.walls.add(this.physics.add.image(i, game.config.height - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
+        }
 
         this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
