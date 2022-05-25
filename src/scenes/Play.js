@@ -40,10 +40,6 @@ class Play extends Phaser.Scene {
         this.walls.add(this.physics.add.image(96, 128, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
         this.walls.add(this.physics.add.image(160, 128, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
         this.walls.add(this.physics.add.image(128, 160, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        console.log(this.walls);
-        
-        // String to save user input for direction
-        this.pos = "";
 
         // Create the block sprite
         this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
@@ -79,29 +75,36 @@ class Play extends Phaser.Scene {
 
         // Load sfx
         this.steps_sfx = this.sound.add('footsteps').setLoop(false);
-        this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);
-
-        for (const wall of this.walls.getChildren()) {
-            console.log(wall.x + ", " + wall.y);
-        }  
-    
+        this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);    
     }
 
     update() {
-        for (const wall of this.walls.getChildren()) {
-            if (this.player.x == wall.x - 32 && this.player.y == wall.y) {
-                console.log('wall right');
-            }
+        this.player.wallL = false;
+        this.player.wallR = false;
+        this.player.wallU = false;
+        this.player.wallD = false;
+
+        this.wallsArray = this.walls.getChildren();
+        for (const wall of this.wallsArray) {
             if (this.player.x == wall.x + 32 && this.player.y == wall.y) {
-                console.log('wall left');
+                this.player.wallL = true;
             }
+
+            if (this.player.x == wall.x - 32 && this.player.y == wall.y) {
+                this.player.wallR = true;
+            }
+
             if (this.player.x == wall.x && this.player.y == wall.y + 32) {
-                console.log('wall above');
+                this.player.wallU = true;
             }
+
             if (this.player.x == wall.x && this.player.y == wall.y - 32) {
-                console.log('wall below');
+                this.player.wallD = true;
             }
         }
+        //console.log(' left: ' + this.player.wallL + '\nright: ' + this.player.wallR + '\n   up: ' + this.player.wallU + '\n down: ' + this.player.wallD);
+
+
         // Checking if player is in tile, then call input function
         if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
             this.player_input();
@@ -136,7 +139,7 @@ class Play extends Phaser.Scene {
 
     player_input() {
         // Move the player up
-        if (keyW.isDown) {
+        if (keyW.isDown && !this.player.wallU) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
@@ -162,7 +165,7 @@ class Play extends Phaser.Scene {
         }
         
         // Move the player down
-        if (keyS.isDown) {
+        if (keyS.isDown && !this.player.wallD) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
@@ -188,7 +191,7 @@ class Play extends Phaser.Scene {
         }
 
         // Move the player left
-        if (keyA.isDown) {
+        if (keyA.isDown && !this.player.wallL) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
@@ -214,7 +217,7 @@ class Play extends Phaser.Scene {
         }
 
         // Move the player right
-        if (keyD.isDown) {
+        if (keyD.isDown && !this.player.wallR) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
