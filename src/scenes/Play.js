@@ -98,6 +98,7 @@ class Play extends Phaser.Scene {
     //         this.scene.restart();
     //     });
     // });
+    this.physics.add.collider(this.player, this.block);
     this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
 
