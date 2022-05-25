@@ -79,30 +79,10 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.player.wallL = false;
-        this.player.wallR = false;
-        this.player.wallU = false;
-        this.player.wallD = false;
 
-        this.wallsArray = this.walls.getChildren();
-        for (const wall of this.wallsArray) {
-            if (this.player.x == wall.x + 32 && this.player.y == wall.y) {
-                this.player.wallL = true;
-            }
-
-            if (this.player.x == wall.x - 32 && this.player.y == wall.y) {
-                this.player.wallR = true;
-            }
-
-            if (this.player.x == wall.x && this.player.y == wall.y + 32) {
-                this.player.wallU = true;
-            }
-
-            if (this.player.x == wall.x && this.player.y == wall.y - 32) {
-                this.player.wallD = true;
-            }
-        }
-        //console.log(' left: ' + this.player.wallL + '\nright: ' + this.player.wallR + '\n   up: ' + this.player.wallU + '\n down: ' + this.player.wallD);
+        this.wall_check(this.player);
+        this.wall_check(this.block);
+        //console.log(' left: ' + this.block.wallL + '\nright: ' + this.block.wallR + '\n   up: ' + this.block.wallU + '\n down: ' + this.block.wallD);
 
 
         // Checking if player is in tile, then call input function
@@ -151,7 +131,7 @@ class Play extends Phaser.Scene {
             });
             this.pos = "up";
 
-            if (this.player.grab) {
+            if (this.player.grab && !this.block.wallU) {
                 this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
@@ -177,7 +157,7 @@ class Play extends Phaser.Scene {
             });
             this.pos = "down";
 
-            if (this.player.grab) {
+            if (this.player.grab && !this.block.wallD) {
                 this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
@@ -203,7 +183,7 @@ class Play extends Phaser.Scene {
             });
             this.pos = "left";
 
-            if (this.player.grab) {
+            if (this.player.grab && !this.block.wallL) {
                 this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
@@ -229,7 +209,7 @@ class Play extends Phaser.Scene {
             });
             this.pos = "right";
 
-            if (this.player.grab) {
+            if (this.player.grab && !this.block.wallR) {
                 this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
@@ -239,6 +219,32 @@ class Play extends Phaser.Scene {
                 });
             } else {
                 this.steps_sfx.play();
+            }
+        }
+    }
+
+    wall_check(object) {
+        object.wallL = false;
+        object.wallR = false;
+        object.wallU = false;
+        object.wallD = false;
+
+        this.wallsArray = this.walls.getChildren();
+        for (const wall of this.wallsArray) {
+            if (object.x == wall.x + 32 && object.y == wall.y) {
+                object.wallL = true;
+            }
+
+            if (object.x == wall.x - 32 && object.y == wall.y) {
+                object.wallR = true;
+            }
+
+            if (object.x == wall.x && object.y == wall.y + 32) {
+                object.wallU = true;
+            }
+
+            if (object.x == wall.x && object.y == wall.y - 32) {
+                object.wallD = true;
             }
         }
     }
