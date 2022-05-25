@@ -63,30 +63,30 @@ class Play extends Phaser.Scene {
     // this.block.setFrictionY(10000);
 
     // Colliders
-    this.destroyed = false;
-    this.physics.add.overlap(this.player, this.block, () => {
-        if (this.player.grab) {
-            console.log("asd");
-            if (this.pos = "up") {
-                console.log("up");
-                this.block.body.setVelocityY(this.ACCELERATION);
-                this.steps_push_sfx.play();
-            } else if (this.pos = "down") {
-                console.log("down");
-                this.block.body.setVelocityY(-this.ACCELERATION);
-                this.steps_push_sfx.play();
-            } else if (this.pos = "left") {
-                console.log("left");
-                this.block.body.setVelocityX(this.ACCELERATION);
-                this.steps_push_sfx.play();
-            } else if (this.pos = "right") {
-                console.log("right");
-                this.block.body.setVelocityX(-this.ACCELERATION);
-                this.steps_push_sfx.play();
-            }
+    // this.destroyed = false;
+    // this.physics.add.overlap(this.player, this.block, () => {
+    //     if (this.player.grab) {
+    //         console.log("asd");
+    //         if (this.pos = "up") {
+    //             console.log("up");
+    //             this.block.body.setVelocityY(this.ACCELERATION);
+    //             this.steps_push_sfx.play();
+    //         } else if (this.pos = "down") {
+    //             console.log("down");
+    //             this.block.body.setVelocityY(-this.ACCELERATION);
+    //             this.steps_push_sfx.play();
+    //         } else if (this.pos = "left") {
+    //             console.log("left");
+    //             this.block.body.setVelocityX(this.ACCELERATION);
+    //             this.steps_push_sfx.play();
+    //         } else if (this.pos = "right") {
+    //             console.log("right");
+    //             this.block.body.setVelocityX(-this.ACCELERATION);
+    //             this.steps_push_sfx.play();
+    //         }
 
-        }
-    });
+    //     }
+    // });
     // this.physics.add.overlap(this.block, this.target, () => {
     //     this.physics.add.image(this.target.x, this.target.y, 'block_on').setOrigin(0);
     //     this.block.destroy();
