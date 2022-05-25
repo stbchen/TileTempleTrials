@@ -64,6 +64,40 @@ class Play extends Phaser.Scene {
     // this.block.setFrictionX(10000);
     // this.block.setFrictionY(10000);
 
+    // Colliders
+    this.destroyed = false;
+    this.physics.add.overlap(this.player, this.block, () => {
+        if (this.player.grab) {
+            console.log("asd");
+            if (this.pos = "up") {
+                console.log("up");
+                this.block.body.setVelocityY(this.ACCELERATION);
+                this.steps_push_sfx.play();
+            } else if (this.pos = "down") {
+                console.log("down");
+                this.block.body.setVelocityY(-this.ACCELERATION);
+                this.steps_push_sfx.play();
+            } else if (this.pos = "left") {
+                console.log("left");
+                this.block.body.setVelocityX(this.ACCELERATION);
+                this.steps_push_sfx.play();
+            } else if (this.pos = "right") {
+                console.log("right");
+                this.block.body.setVelocityX(-this.ACCELERATION);
+                this.steps_push_sfx.play();
+            }
+
+        }
+    });
+    // this.physics.add.overlap(this.block, this.target, () => {
+    //     this.physics.add.image(this.target.x, this.target.y, 'block_on').setOrigin(0);
+    //     this.block.destroy();
+    //     this.destroyed = true;
+    //     //this.block.setVisible(false);
+    //     this.time.delayedCall(3000, () => {
+    //         this.scene.restart();
+    //     });
+    // });
     this.physics.add.collider(this.player, this.block);
     this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
@@ -104,8 +138,10 @@ class Play extends Phaser.Scene {
         this.player_input();
         this.player.body.setDragX(this.DRAG);
         this.player.body.setDragY(this.DRAG);
-        this.block.body.setDragX(this.DRAG);
-        this.block.body.setDragY(this.DRAG);
+        if (!this.destroyed) {
+            this.block.body.setDragX(this.DRAG);
+            this.block.body.setDragY(this.DRAG);    
+        }
 
 
         // } else {
@@ -118,9 +154,10 @@ class Play extends Phaser.Scene {
         //     //this.steps_sfx.stop();
         // }
         // If shift key is held down, player can move block
-        if (keySHIFT.isDown && (
-            Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
-            Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
+        // if (keySHIFT.isDown && (
+        //     Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
+        //     Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
+        if (keySHIFT.isDown) {
             //can put grab animation in here
             this.player.grab = true;
         } else {
@@ -132,10 +169,11 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene')
         }
 
-        //check whether you have won or not
-        if (this.block.x == this.target.x && this.block.y == this.target.y){
-            this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
+        // check whether you have won or not
+        if (this.block.x <= this.target.x + 5 && this.block.x >= this.target.x - 5 && this.block.y <= this.target.y + 5 && this.block.y >= this.target.y - 5){
+            this.physics.add.image(this.target.x, this.target.y, 'block_on').setOrigin(0);
             this.block.destroy();
+            this.destroyed = true;
             this.time.delayedCall(3000, () => {
                 this.scene.restart();
             })
@@ -159,15 +197,15 @@ class Play extends Phaser.Scene {
         this.player.body.setVelocityY(-this.ACCELERATION);
 
         this.pos = "up";
-        console.log("sadklsajdlas");
         if (this.player.grab) {
+            //this.block.body.setVelocityY(-this.ACCELERATION);
             this.steps_push_sfx.play();
-            this.tweens.add ({
-                targets: [this.block],
-                y: this.block.y - 32,
-                duration: 100,
-                ease: 'Power1'
-            });
+            // this.tweens.add ({
+            //     targets: [this.block],
+            //     y: this.block.y - 32,
+            //     duration: 100,
+            //     ease: 'Power1'
+            // });
         } else {
             this.steps_sfx.play();
         }
@@ -190,12 +228,12 @@ class Play extends Phaser.Scene {
 
         if (this.player.grab) {
             this.steps_push_sfx.play();
-            this.tweens.add ({
-                targets: [this.block],
-                y: this.block.y + 32,
-                duration: 100,
-                ease: 'Power1'
-            });
+            // this.tweens.add ({
+            //     targets: [this.block],
+            //     y: this.block.y + 32,
+            //     duration: 100,
+            //     ease: 'Power1'
+            // });
         } else {
             this.steps_sfx.play();
         }
@@ -216,17 +254,17 @@ class Play extends Phaser.Scene {
         // });
         this.pos = "left";
 
-        if (this.player.grab) {
-            this.steps_push_sfx.play();
-            this.tweens.add ({
-                targets: [this.block],
-                x: this.block.x - 32,
-                duration: 100,
-                ease: 'Power1'
-            });
-        } else {
+        // if (this.player.grab) {
+        //     this.steps_push_sfx.play();
+        //     this.tweens.add ({
+        //         targets: [this.block],
+        //         x: this.block.x - 32,
+        //         duration: 100,
+        //         ease: 'Power1'
+        //     });
+        // } else {
             this.steps_sfx.play();
-        }
+        // }
     }
 
     // Move the player right
@@ -243,17 +281,17 @@ class Play extends Phaser.Scene {
         // });
         this.pos = "right";
 
-        if (this.player.grab) {
-            this.steps_push_sfx.play();
-            this.tweens.add ({
-                targets: [this.block],
-                x: this.block.x + 32,
-                duration: 100,
-                ease: 'Power1'
-            });
-        } else {
+        // if (this.player.grab) {
+        //     this.steps_push_sfx.play();
+        //     this.tweens.add ({
+        //         targets: [this.block],
+        //         x: this.block.x + 32,
+        //         duration: 100,
+        //         ease: 'Power1'
+        //     });
+        // } else {
             this.steps_sfx.play();
-        }
+        // }
     }
     else {
         this.player.body.setAccelerationX(0);
