@@ -16,6 +16,8 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
 
+        this.load.atlas('player', './assets/playerAtlas.png', './assets/playerAtlas.json');
+
         this.load.audio('footsteps', './assets/Footsteps.wav');
         this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
     }
@@ -42,7 +44,7 @@ class Play extends Phaser.Scene {
         this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
 
         // Create the player sprite
-        this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0, 0.5);
+        this.player = this.physics.add.sprite(32, 64, 'player').setOrigin(0, 0.5);
         this.player.setSize(32, 32).setOffset(0, 32);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false
@@ -70,19 +72,114 @@ class Play extends Phaser.Scene {
         keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         // Player animations
-        // this.anims.create({
-        //     key: 'idle',
-        //     frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 0, first: 0}),
-        //     frameRate: 1,
-        //     repeat: -1
-        // })
-        // this.anims.create({
-        //     key: 'walk',
-        //     frames: this.anims.generateFrameNumbers('player_walk', {start: 0, start: 1, first: 0}),
-        //     frameRate: 12,
-        //     repeat: -1
-        // })
-        //this.player.anims.play('idle');
+
+        // Down
+        this.anims.create({
+            key: 'downIdle',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'downIdle',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'downWalk',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'downWalk',
+                start: 0,
+                end: 3,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'downGrab',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'downGrab',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        // Up
+        this.anims.create({
+            key: 'upIdle',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'upIdle',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'upWalk',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'upWalk',
+                start: 0,
+                end: 3,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'upGrab',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'upGrab',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        // Side
+        this.anims.create({
+            key: 'sideIdle',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'sideIdle',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'sideWalk',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'sideWalk',
+                start: 0,
+                end: 3,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'sideGrab',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'sideGrab',
+                start: 0,
+                end: 0,
+                zeroPad: 1
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        
+
+        this.player.play('sideWalk');
 
         // Load sfx
         this.steps_sfx = this.sound.add('footsteps').setLoop(false);
