@@ -29,14 +29,15 @@ class Play extends Phaser.Scene {
         for (var i = 0; i < game.config.width; i += 32) {
             this.walls.add(this.physics.add.image(i, 0, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
         }
-        // this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        // this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        // this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
 
         //Create target block
-        this.target = this.physics.add.image(32*Phaser.Math.Between(6, 18), 32*Phaser.Math.Between(1, 7), 'target').setOrigin(0);
+        this.target = this.physics.add.image(32*Phaser.Math.Between(6, 18), 32*Phaser.Math.Between(1, 6), 'target').setOrigin(0);
         this.target.setCollideWorldBounds(true);
         this.target.immovable = true;
+
+        this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
 
         // Create the player sprite
         this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0, 0.5);
@@ -48,6 +49,7 @@ class Play extends Phaser.Scene {
         this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
         this.block.setSize(32, 32).setOffset(0, 16);
         this.block.setCollideWorldBounds(true);
+        this.walls.add(this.block);
 
         for (var i = 0; i < game.config.width; i += 32) {
             this.walls.add(this.physics.add.image(i, game.config.height - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
@@ -81,14 +83,14 @@ class Play extends Phaser.Scene {
 
         // Load sfx
         this.steps_sfx = this.sound.add('footsteps').setLoop(false);
-        this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);    
+        this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);
     }
 
     update() {
-
         this.wall_check(this.player);
         this.wall_check(this.block);
-        //console.log(' left: ' + this.block.wallL + '\nright: ' + this.block.wallR + '\n   up: ' + this.block.wallU + '\n down: ' + this.block.wallD);
+        //console.log('PLAYER\n left: ' + this.player.wallL + '\nright: ' + this.player.wallR + '\n   up: ' + this.player.wallU + '\n down: ' + this.player.wallD);
+        //console.log('BLOCK\n left: ' + this.block.wallL + '\nright: ' + this.block.wallR + '\n   up: ' + this.block.wallU + '\n down: ' + this.block.wallD);
 
 
         // Checking if player is in tile, then call input function
@@ -237,6 +239,9 @@ class Play extends Phaser.Scene {
 
         this.wallsArray = this.walls.getChildren();
         for (const wall of this.wallsArray) {
+            if (wall == this.block && this.player.grab) {
+                continue;
+            }
             if (object.x == wall.x + 32 && object.y == wall.y) {
                 object.wallL = true;
             }
