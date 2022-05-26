@@ -18,4 +18,7 @@ let config = {
 
 let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC, keyCTRL;
 
+let pushSpeed = 450;
+let walkSpeed = 200;
+
 let game = new Phaser.Game(config);

@@ -35,15 +35,18 @@ class Play extends Phaser.Scene {
         this.target.setCollideWorldBounds(true);
         this.target.immovable = true;
 
+        this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+        this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
         this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
         this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
 
         // Create the player sprite
         this.player = this.physics.add.sprite(32, 64, 'player_sprite').setOrigin(0, 0.5);
         this.player.setSize(32, 32).setOffset(0, 32);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false
+        this.player.moveSpeed = 200;
 
         // Create the block sprite
         this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
@@ -127,108 +130,112 @@ class Play extends Phaser.Scene {
 
     player_input() {
         // Move the player up
-        if (keyW.isDown && !this.player.wallU) {
+        if (keyW.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallU) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
+            if (this.player.grab && !this.block.wallU) {
+                this.player.moveSpeed = pushSpeed;
+                this.tweens.add ({
+                    targets: [this.block],
+                    y: this.block.y - 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            } else {
+                this.player.moveSpeed = walkSpeed;
+            }
             if (this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU) {
                 // do nothing
             } else {
                 this.tweens.add ({
                     targets: [this.player],
                     y: this.player.y - 32,
-                    duration: 100,
-                    ease: 'Power1'
-                });
-                this.pos = "up";
-            }
-
-            if (this.player.grab && !this.block.wallU) {
-                this.tweens.add ({
-                    targets: [this.block],
-                    y: this.block.y - 32,
-                    duration: 100,
+                    duration: this.player.moveSpeed,
                     ease: 'Power1'
                 });
             }
         }
         
         // Move the player down
-        if (keyS.isDown && !this.player.wallD) {
+        if (keyS.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallD) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
+            if (this.player.grab && !this.block.wallD) {
+                this.player.moveSpeed = pushSpeed;
+                this.tweens.add ({
+                    targets: [this.block],
+                    y: this.block.y + 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            } else {
+                this.player.moveSpeed = walkSpeed;
+            }
             if (this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD) {
                 // do nothing
             } else {
                 this.tweens.add({
                     targets: [this.player],
                     y: this.player.y + 32,
-                    duration: 100,
-                    ease: 'Power1'
-                });
-            }
-            this.pos = "down";
-
-            if (this.player.grab && !this.block.wallD) {
-                this.tweens.add ({
-                    targets: [this.block],
-                    y: this.block.y + 32,
-                    duration: 100,
+                    duration: this.player.moveSpeed,
                     ease: 'Power1'
                 });
             }
         }
 
         // Move the player left
-        if (keyA.isDown && !this.player.wallL) {
+        if (keyA.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallL) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
+            if (this.player.grab && !this.block.wallL) {
+                this.player.moveSpeed = pushSpeed;
+                this.tweens.add ({
+                    targets: [this.block],
+                    x: this.block.x - 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            } else {
+                this.player.moveSpeed = walkSpeed;
+            }
             if (this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL) {
                 // do nothing
             } else {
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x - 32,
-                    duration: 100,
-                    ease: 'Power1'
-                });
-            }
-            this.pos = "left";
-
-            if (this.player.grab && !this.block.wallL) {
-                this.tweens.add ({
-                    targets: [this.block],
-                    x: this.block.x - 32,
-                    duration: 100,
+                    duration: this.player.moveSpeed,
                     ease: 'Power1'
                 });
             }
         }
 
         // Move the player right
-        if (keyD.isDown && !this.player.wallR) {
+        if (keyD.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallR) {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
+            if (this.player.grab && !this.block.wallR) {
+                this.player.moveSpeed = pushSpeed;
+                this.tweens.add ({
+                    targets: [this.block],
+                    x: this.block.x + 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            } else {
+                this.player.moveSpeed = walkSpeed;
+            }
             if (this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR) {
                 // do nothing
             } else {
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x + 32,
-                    duration: 100,
-                    ease: 'Power1'
-                });
-                this.pos = "right";
-            }
-
-            if (this.player.grab && !this.block.wallR) {
-                this.tweens.add ({
-                    targets: [this.block],
-                    x: this.block.x + 32,
-                    duration: 100,
+                    duration: this.player.moveSpeed,
                     ease: 'Power1'
                 });
             }
