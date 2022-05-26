@@ -145,9 +145,7 @@ class Play extends Phaser.Scene {
             } else {
                 this.player.moveSpeed = walkSpeed;
             }
-            if (this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU) {
-                // do nothing
-            } else {
+            if (!(this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU)) {
                 this.tweens.add ({
                     targets: [this.player],
                     y: this.player.y - 32,
@@ -173,9 +171,7 @@ class Play extends Phaser.Scene {
             } else {
                 this.player.moveSpeed = walkSpeed;
             }
-            if (this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD) {
-                // do nothing
-            } else {
+            if (!(this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD)) {
                 this.tweens.add({
                     targets: [this.player],
                     y: this.player.y + 32,
@@ -201,9 +197,7 @@ class Play extends Phaser.Scene {
             } else {
                 this.player.moveSpeed = walkSpeed;
             }
-            if (this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL) {
-                // do nothing
-            } else {
+            if (!(this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL)) {
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x - 32,
@@ -229,9 +223,7 @@ class Play extends Phaser.Scene {
             } else {
                 this.player.moveSpeed = walkSpeed;
             }
-            if (this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR) {
-                // do nothing
-            } else {
+            if (!(this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR)) {
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x + 32,

@@ -5,8 +5,8 @@
 'use strict';
 let config = {
   type: Phaser.CANVAS,
-  width: 640,
-  height: 320,
+  width: 640, // 1280?
+  height: 320, // 800?
   physics: {
     default: 'arcade',
     arcade: {
@@ -18,7 +18,7 @@ let config = {
 
 let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC, keyCTRL;
 
-let pushSpeed = 450;
+let pushSpeed = 600;
 let walkSpeed = 200;
 
 let game = new Phaser.Game(config);
