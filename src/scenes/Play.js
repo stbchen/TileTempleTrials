@@ -131,24 +131,25 @@ class Play extends Phaser.Scene {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
-            this.tweens.add ({
-                targets: [this.player],
-                y: this.player.y - 32,
-                duration: 100,
-                ease: 'Power1'
-            });
-            this.pos = "up";
+            if (this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU) {
+                // do nothing
+            } else {
+                this.tweens.add ({
+                    targets: [this.player],
+                    y: this.player.y - 32,
+                    duration: 100,
+                    ease: 'Power1'
+                });
+                this.pos = "up";
+            }
 
             if (this.player.grab && !this.block.wallU) {
-                this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
                     y: this.block.y - 32,
                     duration: 100,
                     ease: 'Power1'
                 });
-            } else {
-                this.steps_sfx.play();
             }
         }
         
@@ -157,24 +158,25 @@ class Play extends Phaser.Scene {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
-            this.tweens.add({
-                targets: [this.player],
-                y: this.player.y + 32,
-                duration: 100,
-                ease: 'Power1'
-            });
+            if (this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD) {
+                // do nothing
+            } else {
+                this.tweens.add({
+                    targets: [this.player],
+                    y: this.player.y + 32,
+                    duration: 100,
+                    ease: 'Power1'
+                });
+            }
             this.pos = "down";
 
             if (this.player.grab && !this.block.wallD) {
-                this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
                     y: this.block.y + 32,
                     duration: 100,
                     ease: 'Power1'
                 });
-            } else {
-                this.steps_sfx.play();
             }
         }
 
@@ -183,24 +185,25 @@ class Play extends Phaser.Scene {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
-            this.tweens.add({
-                targets: [this.player],
-                x: this.player.x - 32,
-                duration: 100,
-                ease: 'Power1'
-            });
+            if (this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL) {
+                // do nothing
+            } else {
+                this.tweens.add({
+                    targets: [this.player],
+                    x: this.player.x - 32,
+                    duration: 100,
+                    ease: 'Power1'
+                });
+            }
             this.pos = "left";
 
             if (this.player.grab && !this.block.wallL) {
-                this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
                     x: this.block.x - 32,
                     duration: 100,
                     ease: 'Power1'
                 });
-            } else {
-                this.steps_sfx.play();
             }
         }
 
@@ -209,24 +212,25 @@ class Play extends Phaser.Scene {
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
-            this.tweens.add({
-                targets: [this.player],
-                x: this.player.x + 32,
-                duration: 100,
-                ease: 'Power1'
-            });
-            this.pos = "right";
+            if (this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR) {
+                // do nothing
+            } else {
+                this.tweens.add({
+                    targets: [this.player],
+                    x: this.player.x + 32,
+                    duration: 100,
+                    ease: 'Power1'
+                });
+                this.pos = "right";
+            }
 
             if (this.player.grab && !this.block.wallR) {
-                this.steps_push_sfx.play();
                 this.tweens.add ({
                     targets: [this.block],
                     x: this.block.x + 32,
                     duration: 100,
                     ease: 'Power1'
                 });
-            } else {
-                this.steps_sfx.play();
             }
         }
     }
