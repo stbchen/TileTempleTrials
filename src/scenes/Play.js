@@ -280,11 +280,11 @@ class Play extends Phaser.Scene {
     player_input() {
         // Move the player up
         if (keyW.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallU) {
-            this.player.play('upIdle');
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallU) {
+                this.player.play('upGrab');
                 this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
@@ -294,6 +294,7 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
             } else {
+                this.player.play('upIdle');
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU)) {
@@ -309,11 +310,11 @@ class Play extends Phaser.Scene {
         
         // Move the player down
         if (keyS.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallD) {
-            this.player.play('downIdle');
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallD) {
+                this.player.play('downGrab');
                 this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
@@ -323,6 +324,7 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
             } else {
+                this.player.play('downIdle');
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD)) {
@@ -338,12 +340,12 @@ class Play extends Phaser.Scene {
 
         // Move the player left
         if (keyA.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallL) {
-            this.player.play('sideIdle');
             this.player.flipX = true;
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallL) {
+                this.player.play('sideGrab');
                 this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
@@ -353,6 +355,7 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
             } else {
+                this.player.play('sideIdle');
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL)) {
@@ -368,12 +371,12 @@ class Play extends Phaser.Scene {
 
         // Move the player right
         if (keyD.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallR) {
-            this.player.play('sideIdle');
             this.player.flipX = false;
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallR) {
+                this.player.play('sideGrab');
                 this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
@@ -383,6 +386,7 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
             } else {
+                this.player.play('sideIdle');
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR)) {
