@@ -4,29 +4,28 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('player_sprite', './assets/PlayerResize.png');
-        this.load.image('background_img', './assets/background.png');
-        this.load.image('player_sprite', './assets/player.png');
-        this.load.image('floor1', './assets/background.png');
+        this.load.image('bg', './assets/background.png');
         this.load.image('block_off', './assets/block_off.png');
         this.load.image('block_on', './assets/block_on.png');
         this.load.image('target', './assets/target.png');
-        this.load.image('wall', './assets/block.png');
+        this.load.image('wall', './assets/wall.png');
+        this.load.image('block_danger', './assets/block_danger.png');
+        this.load.image('player_danger', './assets/player_danger.png');
 
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
 
         this.load.atlas('player', './assets/playerAtlas.png', './assets/playerAtlas.json');
 
-        this.load.audio('footsteps', './assets/Footsteps.wav');
-        this.load.audio('footsteps_push', './assets/FootstepsPush.wav');
+        this.load.audio('sfx_step', './assets/step.mp3');
+        this.load.audio('sfx_push', './assets/push.mp3');
     }
 
     create() {
         // Create background
-        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor1').setOrigin(0, 0);
-
-        // Walls
+        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bg').setOrigin(0, 0);
+        
+        // Create walls
         this.walls = this.physics.add.group();
         for (var i = 0; i < game.config.width; i += 32) {
             this.walls.add(this.physics.add.image(i, 0, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
@@ -179,11 +178,11 @@ class Play extends Phaser.Scene {
         });
         
 
-        this.player.play('sideWalk');
+        this.player.play('sideIdle');
 
         // Load sfx
-        this.steps_sfx = this.sound.add('footsteps').setLoop(false);
-        this.steps_push_sfx = this.sound.add('footsteps_push').setLoop(false);
+        this.step_sfx = this.sound.add('sfx_step').setLoop(false);
+        this.push_sfx = this.sound.add('sfx_push').setLoop(false);
     }
 
     update() {
@@ -228,10 +227,12 @@ class Play extends Phaser.Scene {
     player_input() {
         // Move the player up
         if (keyW.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallU) {
+            this.player.play('upIdle');
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallU) {
+                this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
                     targets: [this.block],
@@ -243,6 +244,7 @@ class Play extends Phaser.Scene {
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x && this.player.y == this.block.y + 32 && this.block.wallU)) {
+                this.step_sfx.play();
                 this.tweens.add ({
                     targets: [this.player],
                     y: this.player.y - 32,
@@ -254,10 +256,12 @@ class Play extends Phaser.Scene {
         
         // Move the player down
         if (keyS.isDown && !keyA.isDown && !keyD.isDown && !this.player.wallD) {
+            this.player.play('downIdle');
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallD) {
+                this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
                     targets: [this.block],
@@ -269,6 +273,7 @@ class Play extends Phaser.Scene {
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x && this.player.y == this.block.y - 32 && this.block.wallD)) {
+                this.step_sfx.play();
                 this.tweens.add({
                     targets: [this.player],
                     y: this.player.y + 32,
@@ -280,10 +285,13 @@ class Play extends Phaser.Scene {
 
         // Move the player left
         if (keyA.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallL) {
+            this.player.play('sideIdle');
+            this.player.flipX = true;
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallL) {
+                this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
                     targets: [this.block],
@@ -295,6 +303,7 @@ class Play extends Phaser.Scene {
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x + 32 && this.player.y == this.block.y && this.block.wallL)) {
+                this.step_sfx.play();
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x - 32,
@@ -306,10 +315,13 @@ class Play extends Phaser.Scene {
 
         // Move the player right
         if (keyD.isDown && !keyW.isDown && !keyS.isDown && !this.player.wallR) {
+            this.player.play('sideIdle');
+            this.player.flipX = false;
             // if (this.player.anims.currentAnim.key != 'walk') {
             //     this.player.anims.play('walk');
             // }
             if (this.player.grab && !this.block.wallR) {
+                this.push_sfx.play();
                 this.player.moveSpeed = pushSpeed;
                 this.tweens.add ({
                     targets: [this.block],
@@ -321,6 +333,7 @@ class Play extends Phaser.Scene {
                 this.player.moveSpeed = walkSpeed;
             }
             if (!(this.player.x == this.block.x - 32 && this.player.y == this.block.y && this.block.wallR)) {
+                this.step_sfx.play();
                 this.tweens.add({
                     targets: [this.player],
                     x: this.player.x + 32,
