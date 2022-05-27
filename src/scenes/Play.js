@@ -22,9 +22,17 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        this.gameOver = false;
         // Create background
         this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bg').setOrigin(0, 0);
-        
+
+        // Create hazards
+        this.player_danger = this.physics.add.group();
+        this.player_danger.add(this.physics.add.image(32, 128, 'player_danger').setOrigin(0));
+
+        this.block_danger = this.physics.add.group();
+        this.block_danger.add(this.physics.add.image(64, 128, 'block_danger').setOrigin(0));
+
         // Create walls
         this.walls = this.physics.add.group();
         for (var i = 0; i < game.config.width; i += 32) {
@@ -193,7 +201,7 @@ class Play extends Phaser.Scene {
 
 
         // Checking if player is in tile, then call input function
-        if (this.player.x % 16 == 0 && this.player.y % 16 == 0) {
+        if (this.player.x % 16 == 0 && this.player.y % 16 == 0 && !this.gameOver) {
             this.player_input();
         } else {
             //this.player.anims.play('idle');
@@ -214,13 +222,58 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene')
         }
 
+        //checking for hazards
+        for (const block_danger of this.block_danger.getChildren()) {
+            if (this.block.x == block_danger.x && this.block.y == block_danger.y) {
+                this.gameOver = true;
+                this.add.rectangle(this.block.x, this.block.y, 32, 32, 0x333333).setOrigin(0);
+                this.block.setDepth(1).setOrigin(0.5, 0.33);
+                this.block.x += 16;
+                this.tweens.add ({
+                    targets: [this.block],
+                    y: this.block.y + 24,
+                    scaleX: 0,
+                    scaleY: 0,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.time.delayedCall(3000, () => {
+                    this.scene.restart();
+                });
+            }
+        }
+        
+        for (const player_danger of this.player_danger.getChildren()) {
+            if (this.player.x == player_danger.x && this.player.y == player_danger.y) {
+                this.gameOver = true;
+                this.player.setOrigin(0.5);
+                this.player.x += 16;
+                this.tweens.add ({
+                    targets: [this.player],
+                    alpha: 0,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.tweens.add ({
+                    targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc400ff).setOrigin(0).setAlpha(0)],
+                    alpha: 0.5,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.time.delayedCall(3000, () => {
+                    this.scene.restart();
+                });
+            }
+        }
+
         //check whether you have won or not
         if (this.block.x == this.target.x && this.block.y == this.target.y){
+            this.gameOver = true;
             this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
             this.block.destroy();
             this.time.delayedCall(3000, () => {
                 this.scene.restart();
-            })
+            });
         }
     }
 
