@@ -12,6 +12,9 @@ class Play extends Phaser.Scene {
         this.load.image('block_danger', './assets/block_danger.png');
         this.load.image('player_danger', './assets/player_danger.png');
 
+        this.load.image('floor_1', './assets/floor_1.png');
+        this.load.image('floor_1', './assets/floor_2.png');
+
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
 
@@ -24,50 +27,77 @@ class Play extends Phaser.Scene {
     create() {
         this.gameOver = false;
         // Create background
-        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bg').setOrigin(0, 0);
+        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor_' + level).setOrigin(0, 0);
 
         // Create hazards
         this.player_danger = this.physics.add.group();
-        this.player_danger.add(this.physics.add.image(32, 128, 'player_danger').setOrigin(0));
+        //this.player_danger.add(this.physics.add.image(32, 128, 'player_danger').setOrigin(0));
 
         this.block_danger = this.physics.add.group();
-        this.block_danger.add(this.physics.add.image(64, 128, 'block_danger').setOrigin(0));
+        //this.block_danger.add(this.physics.add.image(64, 128, 'block_danger').setOrigin(0));
 
-        // Create walls
+        // Create boundary walls
         this.walls = this.physics.add.group();
         for (var i = 0; i < game.config.width; i += 32) {
             this.walls.add(this.physics.add.image(i, 0, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
+            this.walls.add(this.physics.add.image(i, game.config.height - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
+        }
+        for (var i = 0; i < game.config.height; i += 32) {
+            this.walls.add(this.physics.add.image(0, i, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
+            this.walls.add(this.physics.add.image(game.config.width - 32, i, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
         }
 
-        //Create target block
-        this.target = this.physics.add.image(32*Phaser.Math.Between(6, 18), 32*Phaser.Math.Between(1, 6), 'target').setOrigin(0);
-        this.target.setCollideWorldBounds(true);
-        this.target.immovable = true;
+        //Level-specific setup
+        if (level == 1) {
+            this.target = this.physics.add.image(15*32, 128, 'target').setOrigin(0);
 
-        this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(this.target.x + 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+            this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+            this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+            this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+            this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y + 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+            this.walls.add(this.physics.add.image(this.target.x, this.target.y + 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+
+            this.player_danger.add(this.physics.add.image(32*9, 32*4, 'player_danger').setOrigin(0));
+            this.player_danger.add(this.physics.add.image(32*9, 32*5, 'player_danger').setOrigin(0));
+
+            this.block_danger.add(this.physics.add.image(32, 32*7, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*2, 32*2, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*4, 32*8, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*1, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*2, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*3, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*6, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*7, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*9, 32*8, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*10, 32, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*10, 32*7, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*11, 32*2, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*11, 32*6, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*12, 32*7, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*12, 32*8, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*17, 32, 'block_danger').setOrigin(0));
+            this.block_danger.add(this.physics.add.image(32*18, 32*8, 'block_danger').setOrigin(0));
+            
+        }
+        this.walls.setAlpha(0);
+        this.player_danger.setAlpha(0);
+        this.block_danger.setAlpha(0);
+        
 
         // Create the player sprite
-        this.player = this.physics.add.sprite(32, 64, 'player').setOrigin(0, 0.5);
+        this.player = this.physics.add.sprite(32, 160, 'player').setOrigin(0, 0.5);
         this.player.setSize(32, 32).setOffset(0, 32);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false
         this.player.moveSpeed = 200;
 
         // Create the block sprite
-        this.block = this.physics.add.image(64, 64, 'block_off').setOrigin(0, 0.33)
+        this.block = this.physics.add.image(64, 160, 'block_off').setOrigin(0, 0.33)
         this.block.setSize(32, 32).setOffset(0, 16);
         this.block.setCollideWorldBounds(true);
         this.walls.add(this.block);
 
-        for (var i = 0; i < game.config.width; i += 32) {
-            this.walls.add(this.physics.add.image(i, game.config.height - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
-        }
-
-        this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
+        //this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
 
         // Add controls
@@ -255,7 +285,7 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
                 this.tweens.add ({
-                    targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc400ff).setOrigin(0).setAlpha(0)],
+                    targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0)],
                     alpha: 0.5,
                     duration: 1500,
                     ease: 'Power1'

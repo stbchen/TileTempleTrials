@@ -13,12 +13,13 @@ let config = {
         debug: false,
     }
 },
-  scene: [Menu, Play, Level2],
+  scene: [Menu, Play],
 };
 
 let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC, keyCTRL;
 
 let pushSpeed = 600;
 let walkSpeed = 200;
+let level;
 
 let game = new Phaser.Game(config);
