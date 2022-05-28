@@ -27,7 +27,7 @@ class Play extends Phaser.Scene {
     create() {
         this.gameOver = false;
         // Create background
-        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor_' + level).setOrigin(0, 0);
+        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'floor_' + floor).setOrigin(0, 0);
 
         // Create hazards
         this.player_danger = this.physics.add.group();
@@ -48,7 +48,7 @@ class Play extends Phaser.Scene {
         }
 
         //Level-specific setup
-        if (level == 1) {
+        if (floor == 1) {
             this.target = this.physics.add.image(15*32, 128, 'target').setOrigin(0);
 
             this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
