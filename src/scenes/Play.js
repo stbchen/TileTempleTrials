@@ -188,10 +188,6 @@ class Play extends Phaser.Scene {
         this.player.setDepth(this.player.y/32);
         this.block.setDepth(this.block.y/32);
 
-        // checking for victory
-        if (this.floor == this.maxFloor) {
-            this.scene.start('Victory');
-        }
         //checking for hazards
         if (this.block.x % 32 === 0 && this.block.y % 32 === 0 && 
             this.crackedIDs.includes(this.layer.getTileAtWorldXY(this.block.x, this.block.y).index)) {
@@ -241,8 +237,8 @@ class Play extends Phaser.Scene {
             this.block.destroy();
             this.time.delayedCall(3000, () => {
                 floor++;
-                if (floor == 3) {
-                    this.scene.start('menuScene');
+                if (floor === 3) {
+                    this.scene.start('victoryScene');
                 } else {
                     this.scene.restart();
                 }
