@@ -27,7 +27,6 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        console.log(floor);
         this.gameOver = false;
         // Load map
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
@@ -240,8 +239,9 @@ class Play extends Phaser.Scene {
                 floor++;
                 if (floor == 3) {
                     this.scene.start('menuScene');
+                } else {
+                    this.scene.restart();
                 }
-                this.scene.restart();
             });
         }
 
