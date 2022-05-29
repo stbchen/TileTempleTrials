@@ -11,9 +11,8 @@ class Play extends Phaser.Scene {
         this.load.image('wall', './assets/wall.png');
         this.load.image('block_danger', './assets/block_danger.png');
         this.load.image('player_danger', './assets/player_danger.png');
+        this.load.image('cracked_tile', './assets/cracked_tile.png');
 
-        //this.load.image('floor_1', './assets/floor_1.png');
-        //this.load.image('floor_2', './assets/floor_2.png');
 
         this.load.image('tileset', './assets/tileset.png');
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
@@ -35,65 +34,17 @@ class Play extends Phaser.Scene {
         this.layer = this.map.createLayer(0, this.tileset, 0, 0);
 
         this.wallIDs = [3, 4, 5, 13, 15, 23, 24, 25, 40];
+        this.crackedIDs = [33, 34, 35];
         
-
-
         this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bg').setOrigin(0, 0).setAlpha(0.2);
 
-        // Create hazards
-        this.player_danger = this.physics.add.group();
-        //this.player_danger.add(this.physics.add.image(32, 128, 'player_danger').setOrigin(0));
-
-        this.block_danger = this.physics.add.group();
-        //this.block_danger.add(this.physics.add.image(64, 128, 'block_danger').setOrigin(0));
-
-        // Create boundary walls
-        this.walls = this.physics.add.group();
-        // for (var i = 0; i < game.config.width; i += 32) {
-        //     this.walls.add(this.physics.add.image(i, 0, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
-        //     this.walls.add(this.physics.add.image(i, game.config.height - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
-        // }
-        // for (var i = 0; i < game.config.height; i += 32) {
-        //     this.walls.add(this.physics.add.image(0, i, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
-        //     this.walls.add(this.physics.add.image(game.config.width - 32, i, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16)); 
-        // }
-
-        //Level-specific setup
-        // if (floor == 1) {
-        this.target = this.physics.add.image(15*32, 128, 'target').setOrigin(0);
-
-        //     this.walls.add(this.physics.add.image(this.target.x, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        //     this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y - 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        //     this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        //     this.walls.add(this.physics.add.image(this.target.x - 32, this.target.y + 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-        //     this.walls.add(this.physics.add.image(this.target.x, this.target.y + 32, 'wall').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-
-        //     this.player_danger.add(this.physics.add.image(32*9, 32*4, 'player_danger').setOrigin(0));
-        //     this.player_danger.add(this.physics.add.image(32*9, 32*5, 'player_danger').setOrigin(0));
-
-        //     this.block_danger.add(this.physics.add.image(32, 32*7, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*2, 32*2, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*4, 32*8, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*1, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*2, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*3, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*6, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*7, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*9, 32*8, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*10, 32, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*10, 32*7, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*11, 32*2, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*11, 32*6, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*12, 32*7, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*12, 32*8, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*17, 32, 'block_danger').setOrigin(0));
-        //     this.block_danger.add(this.physics.add.image(32*18, 32*8, 'block_danger').setOrigin(0));
-            
-        // }
-        // this.walls.setAlpha(0);
-        // this.player_danger.setAlpha(0);
-        // this.block_danger.setAlpha(0);
-        
+        for (var i = 0; i < game.config.width; i += 32) {
+            for (var j = 0; j < game.config.height; j += 32) {
+                if (this.layer.getTileAtWorldXY(i, j).index === 40) {
+                    this.physics.add.image(i, j, 'wall').setOrigin(0, 0.33).setDepth(j/32);
+                }
+            }
+        }        
 
         // Create the player sprite
         this.player = this.physics.add.sprite(32, 160, 'player').setOrigin(0, 0.5);
@@ -105,8 +56,6 @@ class Play extends Phaser.Scene {
         // Create the block sprite
         this.block = this.physics.add.image(64, 160, 'block_off').setOrigin(0, 0.33)
         this.block.setSize(32, 32).setOffset(0, 16);
-        this.block.setCollideWorldBounds(true);
-        this.walls.add(this.block);
 
         //this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
@@ -235,6 +184,39 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        this.player.setDepth(this.player.y/32);
+        this.block.setDepth(this.block.y/32);
+        //checking for hazards
+        if (this.block.x % 32 === 0 && this.block.y % 32 === 0 && 
+            this.crackedIDs.includes(this.layer.getTileAtWorldXY(this.block.x, this.block.y).index)) {
+            this.gameOver = true;
+            this.physics.add.image(this.block.x, this.block.y, 'cracked_tile').setOrigin(0);
+            this.block.setDepth(1).setOrigin(0.5, 0.33);
+            this.block.x += 16;
+            this.tweens.add ({
+                targets: [this.block],
+                y: this.block.y + 24,
+                scaleX: 0,
+                scaleY: 0,
+                duration: 1500,
+                ease: 'Power1'
+            });
+            this.time.delayedCall(3000, () => {
+                this.scene.restart();
+            });
+        }
+
+        //check if block is on target
+        if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
+            this.layer.getTileAtWorldXY(this.block.x, this.block.y).index === 30) {
+            this.gameOver = true;
+            this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0).setDepth(this.block.y/32);
+            this.block.destroy();
+            this.time.delayedCall(3000, () => {
+                this.scene.restart();
+            });
+        }
+
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
             this.player_input();
@@ -255,60 +237,29 @@ class Play extends Phaser.Scene {
         if (keyESC.isDown) {
             this.scene.start('menuScene')
         }
-
-        //checking for hazards
-        for (const block_danger of this.block_danger.getChildren()) {
-            if (this.block.x == block_danger.x && this.block.y == block_danger.y) {
-                this.gameOver = true;
-                this.add.rectangle(this.block.x, this.block.y, 32, 32, 0x333333).setOrigin(0);
-                this.block.setDepth(1).setOrigin(0.5, 0.33);
-                this.block.x += 16;
-                this.tweens.add ({
-                    targets: [this.block],
-                    y: this.block.y + 24,
-                    scaleX: 0,
-                    scaleY: 0,
-                    duration: 1500,
-                    ease: 'Power1'
-                });
-                this.time.delayedCall(3000, () => {
-                    this.scene.restart();
-                });
-            }
-        }
         
-        for (const player_danger of this.player_danger.getChildren()) {
-            if (this.player.x == player_danger.x && this.player.y == player_danger.y) {
-                this.gameOver = true;
-                this.player.setOrigin(0.5);
-                this.player.x += 16;
-                this.tweens.add ({
-                    targets: [this.player],
-                    alpha: 0,
-                    duration: 1500,
-                    ease: 'Power1'
-                });
-                this.tweens.add ({
-                    targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0)],
-                    alpha: 0.5,
-                    duration: 1500,
-                    ease: 'Power1'
-                });
-                this.time.delayedCall(3000, () => {
-                    this.scene.restart();
-                });
-            }
-        }
-
-        //check whether you have won or not
-        if (this.block.x == this.target.x && this.block.y == this.target.y){
-            this.gameOver = true;
-            this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0);
-            this.block.destroy();
-            this.time.delayedCall(3000, () => {
-                this.scene.restart();
-            });
-        }
+        // for (const player_danger of this.player_danger.getChildren()) {
+        //     if (this.player.x == player_danger.x && this.player.y == player_danger.y) {
+        //         this.gameOver = true;
+        //         this.player.setOrigin(0.5);
+        //         this.player.x += 16;
+        //         this.tweens.add ({
+        //             targets: [this.player],
+        //             alpha: 0,
+        //             duration: 1500,
+        //             ease: 'Power1'
+        //         });
+        //         this.tweens.add ({
+        //             targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0)],
+        //             alpha: 0.5,
+        //             duration: 1500,
+        //             ease: 'Power1'
+        //         });
+        //         this.time.delayedCall(3000, () => {
+        //             this.scene.restart();
+        //         });
+        //     }
+        // }
     }
 
     player_input() {
