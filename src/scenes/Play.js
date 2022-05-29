@@ -4,10 +4,9 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('bg', './assets/background.png');
+        this.load.image('grid', './assets/background.png');
         this.load.image('block_off', './assets/block_off.png');
         this.load.image('block_on', './assets/block_on.png');
-        this.load.image('target', './assets/target.png');
         this.load.image('wall', './assets/wall.png');
         this.load.image('block_danger', './assets/block_danger.png');
         this.load.image('player_danger', './assets/player_danger.png');
@@ -16,6 +15,7 @@ class Play extends Phaser.Scene {
 
         this.load.image('tileset', './assets/tileset.png');
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
+        this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
 
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
@@ -27,6 +27,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        console.log(floor);
         this.gameOver = false;
         // Load map
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
@@ -35,8 +36,9 @@ class Play extends Phaser.Scene {
 
         this.wallIDs = [3, 4, 5, 13, 15, 23, 24, 25, 40];
         this.crackedIDs = [33, 34, 35];
+        this.spikesIDs = [42, 43, 44, 45, 50, 52, 53, 54, 55, 62, 63, 64, 65, 72, 73, 74];
         
-        this.add.tileSprite(0, 0, game.config.width, game.config.height, 'bg').setOrigin(0, 0).setAlpha(0.2);
+        //this.add.tileSprite(0, 0, game.config.width, game.config.height, 'grid').setOrigin(0, 0).setAlpha(0.2);
 
         for (var i = 0; i < game.config.width; i += 32) {
             for (var j = 0; j < game.config.height; j += 32) {
@@ -69,7 +71,6 @@ class Play extends Phaser.Scene {
         keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         // Player animations
-
         // Down
         this.anims.create({
             key: 'downIdle',
@@ -90,8 +91,8 @@ class Play extends Phaser.Scene {
                 end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
-            repeat: -1
+            frameRate: 12,
+            repeat: 0
         });
         this.anims.create({
             key: 'downGrab',
@@ -125,8 +126,8 @@ class Play extends Phaser.Scene {
                 end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
-            repeat: -1
+            frameRate: 12,
+            repeat: 0
         });
         this.anims.create({
             key: 'upGrab',
@@ -160,8 +161,8 @@ class Play extends Phaser.Scene {
                 end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
-            repeat: -1
+            frameRate: 12,
+            repeat: 0
         });
         this.anims.create({
             key: 'sideGrab',
@@ -184,8 +185,10 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // setting depth levels
         this.player.setDepth(this.player.y/32);
         this.block.setDepth(this.block.y/32);
+
         //checking for hazards
         if (this.block.x % 32 === 0 && this.block.y % 32 === 0 && 
             this.crackedIDs.includes(this.layer.getTileAtWorldXY(this.block.x, this.block.y).index)) {
@@ -205,6 +208,27 @@ class Play extends Phaser.Scene {
                 this.scene.restart();
             });
         }
+        if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
+            this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
+            this.gameOver = true;
+            this.player.setOrigin(0.5);
+            this.player.x += 16;
+            this.tweens.add ({
+                targets: [this.player],
+                alpha: 0,
+                duration: 1500,
+                ease: 'Power1'
+            });
+            this.tweens.add ({
+                targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)],
+                alpha: 0.5,
+                duration: 1500,
+                ease: 'Power1'
+            });
+            this.time.delayedCall(3000, () => {
+                this.scene.restart();
+            });
+        }
 
         //check if block is on target
         if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
@@ -213,6 +237,10 @@ class Play extends Phaser.Scene {
             this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0).setDepth(this.block.y/32);
             this.block.destroy();
             this.time.delayedCall(3000, () => {
+                floor++;
+                if (floor == 3) {
+                    this.scene.start('menuScene');
+                }
                 this.scene.restart();
             });
         }
@@ -237,29 +265,6 @@ class Play extends Phaser.Scene {
         if (keyESC.isDown) {
             this.scene.start('menuScene')
         }
-        
-        // for (const player_danger of this.player_danger.getChildren()) {
-        //     if (this.player.x == player_danger.x && this.player.y == player_danger.y) {
-        //         this.gameOver = true;
-        //         this.player.setOrigin(0.5);
-        //         this.player.x += 16;
-        //         this.tweens.add ({
-        //             targets: [this.player],
-        //             alpha: 0,
-        //             duration: 1500,
-        //             ease: 'Power1'
-        //         });
-        //         this.tweens.add ({
-        //             targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0)],
-        //             alpha: 0.5,
-        //             duration: 1500,
-        //             ease: 'Power1'
-        //         });
-        //         this.time.delayedCall(3000, () => {
-        //             this.scene.restart();
-        //         });
-        //     }
-        // }
     }
 
     player_input() {
@@ -310,6 +315,9 @@ class Play extends Phaser.Scene {
             }
 
             if (!this.wallIDs.includes(tile.index)) {
+                if (this.player.anims.currentAnim.key == 'upIdle') {
+                    this.player.play('upWalk');
+                }
                 this.step_sfx.play();
                 this.tweens.add ({
                     targets: [this.player],
@@ -370,6 +378,9 @@ class Play extends Phaser.Scene {
             }
 
             if (!this.wallIDs.includes(tile.index)) {
+                if (this.player.anims.currentAnim.key == 'sideIdle') {
+                    this.player.play('sideWalk');
+                }
                 this.step_sfx.play();
                 this.tweens.add ({
                     targets: [this.player],
@@ -426,6 +437,9 @@ class Play extends Phaser.Scene {
             }
 
             if (!this.wallIDs.includes(tile.index)) {
+                if (this.player.anims.currentAnim.key == 'downIdle') {
+                    this.player.play('downWalk');
+                }
                 this.step_sfx.play();
                 this.tweens.add ({
                     targets: [this.player],
@@ -486,6 +500,9 @@ class Play extends Phaser.Scene {
             }
 
             if (!this.wallIDs.includes(tile.index)) {
+                if (this.player.anims.currentAnim.key == 'sideIdle') {
+                    this.player.play('sideWalk');
+                }
                 this.step_sfx.play();
                 this.tweens.add ({
                     targets: [this.player],
