@@ -51,15 +51,21 @@ class Play extends Phaser.Scene {
         this.player = this.physics.add.sprite(32, 160, 'player').setOrigin(0, 0.5);
         this.player.setSize(32, 32).setOffset(0, 32);
         this.player.setCollideWorldBounds(true);
-        this.player.grab = false
+        this.player.grab = false;
+        this.player.grab1 = false;
+        this.player.grab2 = false;
+        this.player.grab3 = false;
         this.player.moveSpeed = walkSpeed;
 
-        // Create the block sprite
+        // Create the block sprites
+        this.block1 = this.physics.add.image(64, 160, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+        this.block2 = this.physics.add.image(64, 96, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+        this.block3 = this.physics.add.image(64, 224, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+
         this.blocks = this.physics.add.group();
-
-        this.blocks.add(this.physics.add.image(64, 160, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
-
-        this.block = this.physics.add.image(32, 64, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+        this.blocks.add(this.block1);
+        this.blocks.add(this.block2);
+        this.blocks.add(this.block3);
 
         //this.instructions = this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
@@ -187,30 +193,33 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.blocks_array = this.blocks.getChildren();
         // setting depth levels
         this.player.setDepth(this.player.y/32);
-        this.block.setDepth(this.block.y/32);
+        for (const block of this.blocks.getChildren()) {
+            block.setDepth(block.y/32);
+
+            if (block.x % 32 === 0 && block.y % 32 === 0 && 
+                this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
+                this.gameOver = true;
+                this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
+                block.setDepth(1).setOrigin(0.5, 0.33);
+                block.x += 16;
+                this.tweens.add ({
+                    targets: [block],
+                    y: block.y + 24,
+                    scaleX: 0,
+                    scaleY: 0,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.time.delayedCall(3000, () => {
+                    this.scene.restart();
+                });
+            }
+        }
 
         //checking for hazards
-        if (this.block.x % 32 === 0 && this.block.y % 32 === 0 && 
-            this.crackedIDs.includes(this.layer.getTileAtWorldXY(this.block.x, this.block.y).index)) {
-            this.gameOver = true;
-            this.physics.add.image(this.block.x, this.block.y, 'cracked_tile').setOrigin(0);
-            this.block.setDepth(1).setOrigin(0.5, 0.33);
-            this.block.x += 16;
-            this.tweens.add ({
-                targets: [this.block],
-                y: this.block.y + 24,
-                scaleX: 0,
-                scaleY: 0,
-                duration: 1500,
-                ease: 'Power1'
-            });
-            this.time.delayedCall(3000, () => {
-                this.scene.restart();
-            });
-        }
+        
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
             this.gameOver = true;
@@ -234,36 +243,65 @@ class Play extends Phaser.Scene {
         }
 
         //check if block is on target
-        //TO DO MULTIPLE BLOCKS, RUN A FOR LOOP AND INCREMENT A COUNTER FOR EACH TARGET TILE
-        if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
+            //TO DO MULTIPLE BLOCKS, RUN A FOR LOOP AND INCREMENT A COUNTER FOR EACH TARGET TILE
+        /*if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
             this.layer.getTileAtWorldXY(this.block.x, this.block.y).index === 30) {
             this.gameOver = true;
             this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0).setDepth(this.block.y/32);
             this.block.destroy();
             this.time.delayedCall(3000, () => {
                 floor++;
-                if (floor === 3) {
+                if (floor === 2) {
                     this.scene.start('victoryScene');
                 } else {
                     this.scene.restart();
                 }
             });
-        }
+        } */
 
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
-            this.player_input();
-        } else {
-            //this.player.anims.play('idle');
-            //this.steps_sfx.stop();
+            if (!this.player.grab) {
+                this.player_input();
+            }
+            if (this.player.grab1) {
+                this.player_input(this.block1);
+            }
+            if (this.player.grab2) {
+                this.player_input(this.block2);
+            }
+            if (this.player.grab3) {
+                this.player_input(this.block3);
+            }
         }
         // If shift key is held down, player can move block
-        if (keySHIFT.isDown && (
-            Math.abs(this.player.x - this.block.x) == 32 && this.player.y == this.block.y || 
-            Math.abs(this.player.y - this.block.y) == 32 && this.player.x == this.block.x)) {
-            this.player.grab = true;
+        if (keySHIFT.isDown) {
+            if ((Math.abs(this.player.x - this.block1.x) == 32 && this.player.y == this.block1.y) || 
+                (this.player.x == this.block1.x && Math.abs(this.player.y - this.block1.y) == 32)) {
+                this.player.grab = true;
+                this.player.grab1 = true
+                this.player.grab2 = false;
+                this.player.grab3 = false
+            }
+            if ((Math.abs(this.player.x - this.block2.x) == 32 && this.player.y == this.block2.y) || 
+                (this.player.x == this.block2.x && Math.abs(this.player.y - this.block2.y) == 32)) {
+                this.player.grab = true;
+                this.player.grab1 = false
+                this.player.grab2 = true;
+                this.player.grab3 = false
+            }
+            if ((Math.abs(this.player.x - this.block3.x) == 32 && this.player.y == this.block3.y) || 
+                (this.player.x == this.block3.x && Math.abs(this.player.y - this.block3.y) == 32)) {
+                this.player.grab = true;
+                this.player.grab1 = false
+                this.player.grab2 = false;
+                this.player.grab3 = true;
+            }
         } else {
             this.player.grab = false;
+            this.player.grab1 = false
+            this.player.grab2 = false;
+            this.player.grab3 = false;
         }
 
         //go back to main menu
@@ -272,20 +310,20 @@ class Play extends Phaser.Scene {
         }
     }
 
-    player_input() {
+    player_input(block = null) {
         var tile;
         if (keyW.isDown && !keyA.isDown && !keyD.isDown) {
-            if (this.player.x === this.block.x && this.player.y === this.block.y + 32) {
+            if (block != null && this.player.x === block.x && this.player.y === block.y + 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
-                    tile = this.layer.getTileAtWorldXY(this.block.x, this.block.y - 32);
+                    tile = this.layer.getTileAtWorldXY(block.x, block.y - 32);
                     if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('upGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            y: this.block.y - 32,
+                            targets: [block],
+                            y: block.y - 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -293,7 +331,7 @@ class Play extends Phaser.Scene {
                 } else {
                     tile = this.layer.getTileAtWorldXY(0, 0);
                 }
-            } else if (this.player.x === this.block.x && this.player.y === this.block.y - 32) {
+            } else if (block != null && this.player.x === block.x && this.player.y === block.y - 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y - 32);
@@ -302,8 +340,8 @@ class Play extends Phaser.Scene {
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            y: this.block.y - 32,
+                            targets: [block],
+                            y: block.y - 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -319,7 +357,11 @@ class Play extends Phaser.Scene {
                 tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y - 32);
             }
 
-            if (!this.wallIDs.includes(tile.index)) {
+            if (block === null && ((this.player.x === this.block1.x && this.player.y === this.block1.y + 32) ||
+                                   (this.player.x === this.block2.x && this.player.y === this.block2.y + 32) ||
+                                   (this.player.x === this.block3.x && this.player.y === this.block3.y + 32))) {
+                // do nothing
+            } else if (!this.wallIDs.includes(tile.index)) {
                 if (this.player.anims.currentAnim.key == 'upIdle') {
                     this.player.play('upWalk');
                 }
@@ -334,18 +376,18 @@ class Play extends Phaser.Scene {
         }
 
         if (keyA.isDown && !keyW.isDown && !keyS.isDown) {
-            if (this.player.x === this.block.x + 32 && this.player.y === this.block.y) {
+            if (block != null && this.player.x === block.x + 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
-                    tile = this.layer.getTileAtWorldXY(this.block.x - 32, this.block.y);
+                    tile = this.layer.getTileAtWorldXY(block.x - 32, block.y);
                     if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = true;
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            x: this.block.x - 32,
+                            targets: [block],
+                            x: block.x - 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -353,7 +395,7 @@ class Play extends Phaser.Scene {
                 } else {
                     tile = this.layer.getTileAtWorldXY(0, 0);
                 }
-            } else if (this.player.x === this.block.x - 32 && this.player.y === this.block.y) {
+            } else if (block != null && this.player.x === block.x - 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x - 32, this.player.y);
@@ -363,8 +405,8 @@ class Play extends Phaser.Scene {
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            x: this.block.x - 32,
+                            targets: [block],
+                            x: block.x - 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -382,7 +424,11 @@ class Play extends Phaser.Scene {
                 tile = this.layer.getTileAtWorldXY(this.player.x - 32, this.player.y);
             }
 
-            if (!this.wallIDs.includes(tile.index)) {
+            if (block === null && ((this.player.x === this.block1.x + 32 && this.player.y === this.block1.y) ||
+                                   (this.player.x === this.block2.x + 32 && this.player.y === this.block2.y) ||
+                                   (this.player.x === this.block3.x + 32 && this.player.y === this.block3.y))) {
+                // do nothing
+            } else if (!this.wallIDs.includes(tile.index)) {
                 if (this.player.anims.currentAnim.key == 'sideIdle') {
                     this.player.play('sideWalk');
                 }
@@ -397,17 +443,17 @@ class Play extends Phaser.Scene {
         }
 
         if (keyS.isDown && !keyA.isDown && !keyD.isDown) {
-            if (this.player.x === this.block.x && this.player.y === this.block.y - 32) {
+            if (block != null && this.player.x === block.x && this.player.y === block.y - 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
-                    tile = this.layer.getTileAtWorldXY(this.block.x, this.block.y + 32);
+                    tile = this.layer.getTileAtWorldXY(block.x, block.y + 32);
                     if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('downGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            y: this.block.y + 32,
+                            targets: [block],
+                            y: block.y + 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -415,7 +461,7 @@ class Play extends Phaser.Scene {
                 } else {
                     tile = this.layer.getTileAtWorldXY(0, 0);
                 }
-            } else if (this.player.x === this.block.x && this.player.y === this.block.y + 32) {
+            } else if (block != null && this.player.x === block.x && this.player.y === block.y + 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y + 32);
@@ -424,8 +470,8 @@ class Play extends Phaser.Scene {
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            y: this.block.y + 32,
+                            targets: [block],
+                            y: block.y + 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -441,7 +487,11 @@ class Play extends Phaser.Scene {
                 tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y + 32);
             }
 
-            if (!this.wallIDs.includes(tile.index)) {
+            if (block === null && ((this.player.x === this.block1.x && this.player.y === this.block1.y - 32) ||
+                                   (this.player.x === this.block2.x && this.player.y === this.block2.y - 32) ||
+                                   (this.player.x === this.block3.x && this.player.y === this.block3.y - 32))) {
+                // do nothing
+            } else if (!this.wallIDs.includes(tile.index)) {
                 if (this.player.anims.currentAnim.key == 'downIdle') {
                     this.player.play('downWalk');
                 }
@@ -456,18 +506,18 @@ class Play extends Phaser.Scene {
         }
 
         if (keyD.isDown && !keyW.isDown && !keyS.isDown) {
-            if (this.player.x === this.block.x - 32 && this.player.y === this.block.y) {
+            if (block != null && this.player.x === block.x - 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
-                    tile = this.layer.getTileAtWorldXY(this.block.x + 32, this.block.y);
+                    tile = this.layer.getTileAtWorldXY(block.x + 32, block.y);
                     if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = false;
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            x: this.block.x + 32,
+                            targets: [block],
+                            x: block.x + 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -475,7 +525,7 @@ class Play extends Phaser.Scene {
                 } else {
                     tile = this.layer.getTileAtWorldXY(0, 0);
                 }
-            } else if (this.player.x === this.block.x + 32 && this.player.y === this.block.y) {
+            } else if (block != null && this.player.x === block.x + 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x + 32, this.player.y);
@@ -485,8 +535,8 @@ class Play extends Phaser.Scene {
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
                         this.tweens.add ({
-                            targets: [this.block],
-                            x: this.block.x + 32,
+                            targets: [block],
+                            x: block.x + 32,
                             duration: this.player.moveSpeed,
                             ease: 'Power1'
                         });
@@ -504,7 +554,11 @@ class Play extends Phaser.Scene {
                 tile = this.layer.getTileAtWorldXY(this.player.x + 32, this.player.y);
             }
 
-            if (!this.wallIDs.includes(tile.index)) {
+            if (block === null && ((this.player.x === this.block1.x - 32 && this.player.y === this.block1.y) ||
+                                   (this.player.x === this.block2.x - 32 && this.player.y === this.block2.y) ||
+                                   (this.player.x === this.block3.x - 32 && this.player.y === this.block3.y))) {
+                // do nothing
+            } else if (!this.wallIDs.includes(tile.index)) {
                 if (this.player.anims.currentAnim.key == 'sideIdle') {
                     this.player.play('sideWalk');
                 }
