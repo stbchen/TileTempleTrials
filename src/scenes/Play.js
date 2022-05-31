@@ -16,6 +16,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
 
         this.load.image('tileset', './assets/tileset.png');
+        this.load.tilemapCSV('floor_0', './assets/floor_0.csv');
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
         this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
         this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
@@ -191,6 +192,13 @@ class Play extends Phaser.Scene {
         });
         
         // Floor-specific setup
+        if (floor === 0) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*10, 32*8, 'player').setOrigin(0, 0.5).play('upIdle');
+            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        }
         if (floor === 1) {
             this.goal = 1;
             this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5).play('sideIdle');
@@ -201,7 +209,7 @@ class Play extends Phaser.Scene {
         if (floor === 2) {
             this.goal = 2;
             this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5).play('sideIdle');
-            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
