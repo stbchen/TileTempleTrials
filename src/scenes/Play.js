@@ -317,7 +317,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(block.x, block.y - 32);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((block.x === this.block1.x && block.y === this.block1.y + 32) ||
+                        (block.x === this.block2.x && block.y === this.block2.y + 32) ||
+                        (block.x === this.block3.x && block.y === this.block3.y + 32)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('upGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -335,7 +339,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y - 32);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((this.player.x === this.block1.x && this.player.y === this.block1.y + 32) ||
+                        (this.player.x === this.block2.x && this.player.y === this.block2.y + 32) ||
+                        (this.player.x === this.block3.x && this.player.y === this.block3.y + 32)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('downGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -380,7 +388,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(block.x - 32, block.y);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((block.x === this.block1.x + 32 && block.y === this.block1.y) ||
+                        (block.x === this.block2.x + 32 && block.y === this.block2.y) ||
+                        (block.x === this.block3.x + 32 && block.y === this.block3.y)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = true;
                         this.push_sfx.play();
@@ -399,7 +411,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x - 32, this.player.y);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((this.player.x === this.block1.x + 32 && this.player.y === this.block1.y) ||
+                        (this.player.x === this.block2.x + 32 && this.player.y === this.block2.y) ||
+                        (this.player.x === this.block3.x + 32 && this.player.y === this.block3.y)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = false;
                         this.push_sfx.play();
@@ -447,7 +463,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(block.x, block.y + 32);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((block.x === this.block1.x && block.y === this.block1.y - 32) ||
+                        (block.x === this.block2.x && block.y === this.block2.y - 32) ||
+                        (block.x === this.block3.x && block.y === this.block3.y - 32)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('downGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -465,7 +485,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y + 32);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((this.player.x === this.block1.x && this.player.y === this.block1.y - 32) ||
+                        (this.player.x === this.block2.x && this.player.y === this.block2.y - 32) ||
+                        (this.player.x === this.block3.x && this.player.y === this.block3.y - 32)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('upGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -510,7 +534,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(block.x + 32, block.y);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((block.x === this.block1.x - 32 && block.y === this.block1.y) ||
+                        (block.x === this.block2.x - 32 && block.y === this.block2.y) ||
+                        (block.x === this.block3.x - 32 && block.y === this.block3.y)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = false;
                         this.push_sfx.play();
@@ -529,7 +557,11 @@ class Play extends Phaser.Scene {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
                     tile = this.layer.getTileAtWorldXY(this.player.x + 32, this.player.y);
-                    if (!this.wallIDs.includes(tile.index)) {
+                    if ((this.player.x === this.block1.x - 32 && this.player.y === this.block1.y) ||
+                        (this.player.x === this.block2.x - 32 && this.player.y === this.block2.y) ||
+                        (this.player.x === this.block3.x - 32 && this.player.y === this.block3.y)) {
+                        return;
+                    } else if (!this.wallIDs.includes(tile.index)) {
                         this.player.play('sideGrab');
                         this.player.flipX = true;
                         this.push_sfx.play();
