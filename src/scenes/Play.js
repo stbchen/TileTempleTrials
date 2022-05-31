@@ -5,17 +5,19 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('grid', './assets/background.png');
-        this.load.image('block_a', './assets/block_a.png');
         this.load.image('block_on', './assets/block_on.png');
         this.load.image('wall', './assets/wall.png');
         this.load.image('block_danger', './assets/block_danger.png');
         this.load.image('player_danger', './assets/player_danger.png');
         this.load.image('cracked_tile', './assets/cracked_tile.png');
 
+        this.load.spritesheet('block_a', './assets/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
+        this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
 
         this.load.image('tileset', './assets/tileset.png');
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
         this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
+        this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
 
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
@@ -49,45 +51,8 @@ class Play extends Phaser.Scene {
                 }
             }
         }
-        
-        
-
-        // Floor-specific setup
-        if (floor === 1) {
-            this.goal = 1;
-            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
-            this.block1 = this.physics.add.image(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-            this.block2 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
-            this.block3 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
-        } else if (floor === 2) {
-            this.goal = 2;
-            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5);
-            this.block1 = this.physics.add.image(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-            this.block2 = this.physics.add.image(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-            this.block3 = this.physics.add.image(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
-        } else if (floor === 3) {
-            this.goal = 1;
-            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
-            this.block1 = this.physics.add.image(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-            this.block2 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
-            this.block3 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
-        }
-
-        this.player.setSize(32, 32).setOffset(0, 32);
-        this.player.setCollideWorldBounds(true);
-        this.player.grab = false;
-        this.player.grab1 = false;
-        this.player.grab2 = false;
-        this.player.grab3 = false;
-        this.player.moveSpeed = walkSpeed;
-
-        this.blocks = this.physics.add.group();
-        this.blocks.add(this.block1);
-        this.blocks.add(this.block2);
-        this.blocks.add(this.block3);
 
         //this.instructions = this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
-
 
         // Add controls
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -200,15 +165,64 @@ class Play extends Phaser.Scene {
                 zeroPad: 1
             }),
             frameRate: 4,
-            repeat: -1
+            repeat: 0
+        });
+
+        // Block animations
+        this.anims.create({
+            key: 'glow_a',
+            frames: this.anims.generateFrameNumbers('block_a', {start: 0, end: 1, first: 0}),
+            frameRate: 0,
+            repeat: 0
+        });
+        this.anims.create({
+            key: 'glow_b',
+            frames: this.anims.generateFrameNumbers('block_b', {start: 0, end: 1, first: 0}),
+            frameRate: 0,
+            repeat: 0
         });
         
+        // Floor-specific setup
+        if (floor === 1) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.sprite(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        } else if (floor === 2) {
+            this.goal = 2;
+            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        } else if (floor === 3) {
+            this.goal = 2;
+            this.player = this.physics.add.sprite(32*3, 32*6, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.sprite(32*15, 32*3, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*1, 32*3, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        }
+
+        this.player.setSize(32, 32).setOffset(0, 32);
+        this.player.setCollideWorldBounds(true);
+        this.player.grab = false;
+        this.player.grab1 = false;
+        this.player.grab2 = false;
+        this.player.grab3 = false;
+        this.player.moveSpeed = walkSpeed;
+
+        this.blocks = this.physics.add.group();
+        this.blocks.add(this.block1);
+        this.blocks.add(this.block2);
+        this.blocks.add(this.block3);
 
         this.player.play('sideIdle');
 
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
+        
+
     }
 
     update() {
@@ -261,15 +275,21 @@ class Play extends Phaser.Scene {
                 });
             }
             //check if block is on target
-            if (block.x % 32 === 0 && block.y % 32 === 0 &&
-                this.layer.getTileAtWorldXY(block.x, block.y).index === 30) {
-                this.targets++;
-                this.completed.add(this.physics.add.image(block.x, block.y, 'block_on').setOrigin(0).setDepth(block.y/32));
-                block.destroy();
+            if (block.x % 32 === 0 && block.y % 32 === 0) {
+                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 30 && block.texture.key === 'block_a') {
+                    block.anims.play({key: 'glow_a', startFrame: 1});
+                } else if (block.texture.key === 'block_a') {
+                    block.anims.play({key: 'glow_a', startFrame: 0});
+                }
+                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 60 && block.texture.key === 'block_b') {
+                    block.play({key: 'glow_b', startFrame: 1});
+                } else if (block.texture.key === 'block_b') {
+                    block.anims.play({key: 'glow_b', startFrame: 0});
+                }
             }
         }
 
-        if (this.goal === this.completed.getChildren().length){
+        if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3){ // use currentFrame.index to add up total and compare to goal
             this.gameOver = true;
             this.time.delayedCall(3000, () => {
                 floor++;
@@ -280,7 +300,6 @@ class Play extends Phaser.Scene {
                 }
             });
         }
-        
 
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
