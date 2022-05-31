@@ -27,6 +27,9 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        //setting up variables for end of level
+        this.completed = this.physics.add.group();
+        this.goal = 0;
         this.gameOver = false;
         // Load map
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
@@ -45,10 +48,31 @@ class Play extends Phaser.Scene {
                     this.physics.add.image(i, j, 'wall').setOrigin(0, 0.33).setDepth(j/32);
                 }
             }
-        }        
+        }
+        
+        
 
-        // Create the player sprite
-        this.player = this.physics.add.sprite(32, 160, 'player').setOrigin(0, 0.5);
+        // Floor-specific setup
+        if (floor === 1) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.image(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+            this.block2 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
+            this.block3 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
+        } else if (floor === 2) {
+            this.goal = 2;
+            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.image(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+            this.block2 = this.physics.add.image(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+            this.block3 = this.physics.add.image(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
+        } else if (floor === 3) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
+            this.block1 = this.physics.add.image(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+            this.block2 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
+            this.block3 = this.physics.add.image(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).setAlpha(0);
+        }
+
         this.player.setSize(32, 32).setOffset(0, 32);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false;
@@ -56,11 +80,6 @@ class Play extends Phaser.Scene {
         this.player.grab2 = false;
         this.player.grab3 = false;
         this.player.moveSpeed = walkSpeed;
-
-        // Create the block sprites
-        this.block1 = this.physics.add.image(64, 160, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-        this.block2 = this.physics.add.image(64, 96, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-        this.block3 = this.physics.add.image(64, 224, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
 
         this.blocks = this.physics.add.group();
         this.blocks.add(this.block1);
@@ -195,31 +214,7 @@ class Play extends Phaser.Scene {
     update() {
         // setting depth levels
         this.player.setDepth(this.player.y/32);
-        for (const block of this.blocks.getChildren()) {
-            block.setDepth(block.y/32);
-
-            if (block.x % 32 === 0 && block.y % 32 === 0 && 
-                this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
-                this.gameOver = true;
-                this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
-                block.setDepth(1).setOrigin(0.5, 0.33);
-                block.x += 16;
-                this.tweens.add ({
-                    targets: [block],
-                    y: block.y + 24,
-                    scaleX: 0,
-                    scaleY: 0,
-                    duration: 1500,
-                    ease: 'Power1'
-                });
-                this.time.delayedCall(3000, () => {
-                    this.scene.restart();
-                });
-            }
-        }
-
         //checking for hazards
-        
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
             this.gameOver = true;
@@ -242,22 +237,50 @@ class Play extends Phaser.Scene {
             });
         }
 
-        //check if block is on target
-            //TO DO MULTIPLE BLOCKS, RUN A FOR LOOP AND INCREMENT A COUNTER FOR EACH TARGET TILE
-        /*if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
-            this.layer.getTileAtWorldXY(this.block.x, this.block.y).index === 30) {
+        for (const block of this.blocks.getChildren()) {
+            // setting depth levels
+            block.setDepth(block.y/32);
+
+            //checking for hazards
+            if (block.x % 32 === 0 && block.y % 32 === 0 && 
+                this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
+                this.gameOver = true;
+                this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
+                block.setDepth(1).setOrigin(0.5, 0.33);
+                block.x += 16;
+                this.tweens.add ({
+                    targets: [block],
+                    y: block.y + 24,
+                    scaleX: 0,
+                    scaleY: 0,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.time.delayedCall(3000, () => {
+                    this.scene.restart();
+                });
+            }
+            //check if block is on target
+            if (block.x % 32 === 0 && block.y % 32 === 0 &&
+                this.layer.getTileAtWorldXY(block.x, block.y).index === 30) {
+                this.targets++;
+                this.completed.add(this.physics.add.image(block.x, block.y, 'block_on').setOrigin(0).setDepth(block.y/32));
+                block.destroy();
+            }
+        }
+
+        if (this.goal === this.completed.getChildren().length){
             this.gameOver = true;
-            this.physics.add.image(this.block.x, this.block.y, 'block_on').setOrigin(0).setDepth(this.block.y/32);
-            this.block.destroy();
             this.time.delayedCall(3000, () => {
                 floor++;
-                if (floor === 2) {
+                if (floor === 4) {
                     this.scene.start('victoryScene');
                 } else {
                     this.scene.restart();
                 }
             });
-        } */
+        }
+        
 
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
