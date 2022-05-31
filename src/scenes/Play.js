@@ -5,7 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('grid', './assets/background.png');
-        this.load.image('block_off', './assets/block_off.png');
+        this.load.image('block_a', './assets/block_a.png');
         this.load.image('block_on', './assets/block_on.png');
         this.load.image('wall', './assets/wall.png');
         this.load.image('block_danger', './assets/block_danger.png');
@@ -55,10 +55,13 @@ class Play extends Phaser.Scene {
         this.player.moveSpeed = walkSpeed;
 
         // Create the block sprite
-        this.block = this.physics.add.image(64, 160, 'block_off').setOrigin(0, 0.33)
-        this.block.setSize(32, 32).setOffset(0, 16);
+        this.blocks = this.physics.add.group();
 
-        //this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
+        this.blocks.add(this.physics.add.image(64, 160, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16));
+
+        this.block = this.physics.add.image(32, 64, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+
+        //this.instructions = this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
 
         // Add controls
@@ -184,6 +187,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        this.blocks_array = this.blocks.getChildren();
         // setting depth levels
         this.player.setDepth(this.player.y/32);
         this.block.setDepth(this.block.y/32);
@@ -230,6 +234,7 @@ class Play extends Phaser.Scene {
         }
 
         //check if block is on target
+        //TO DO MULTIPLE BLOCKS, RUN A FOR LOOP AND INCREMENT A COUNTER FOR EACH TARGET TILE
         if (this.block.x % 32 === 0 && this.block.y % 32 === 0 &&
             this.layer.getTileAtWorldXY(this.block.x, this.block.y).index === 30) {
             this.gameOver = true;
