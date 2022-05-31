@@ -19,6 +19,7 @@ class Play extends Phaser.Scene {
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
         this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
         this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
+        this.load.tilemapCSV('floor_4', './assets/floor_4.csv');
 
         this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
         this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
@@ -192,24 +193,31 @@ class Play extends Phaser.Scene {
         // Floor-specific setup
         if (floor === 1) {
             this.goal = 1;
-            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5);
+            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5).play('sideIdle');
             this.block1 = this.physics.add.sprite(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 2) {
             this.goal = 2;
-            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5);
+            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5).play('sideIdle');
             this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 3) {
             this.goal = 2;
-            this.player = this.physics.add.sprite(32*3, 32*6, 'player').setOrigin(0, 0.5);
+            this.player = this.physics.add.sprite(32*10, 32*2, 'player').setOrigin(0, 0.5).play('downIdle');
             this.block1 = this.physics.add.sprite(32*15, 32*3, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*1, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        }
+        if (floor == 4) {
+            this.goal = 3;
+            this.player = this.physics.add.sprite(32*9, 32*4, 'player').setOrigin(0, 0.5).play('downIdle');
+            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*3, 32*8, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
         }
 
         this.player.setSize(32, 32).setOffset(0, 32);
@@ -224,8 +232,6 @@ class Play extends Phaser.Scene {
         this.blocks.add(this.block1);
         this.blocks.add(this.block2);
         this.blocks.add(this.block3);
-
-        this.player.play('sideIdle');
 
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
@@ -301,11 +307,9 @@ class Play extends Phaser.Scene {
         if (this.layer.getTileAtWorldXY(this.block1.x, this.block1.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70) {
-            console.log('unlocked');
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
-            console.log('locked');
             this.unlocked = false;
             this.locked_walls.setAlpha(1);
         }
@@ -314,7 +318,7 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
             this.time.delayedCall(3000, () => {
                 floor++;
-                if (floor === 4) {
+                if (floor === 5) {
                     this.scene.start('victoryScene');
                 } else {
                     this.scene.restart();
