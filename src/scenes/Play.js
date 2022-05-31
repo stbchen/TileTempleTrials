@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         this.load.image('grid', './assets/background.png');
         this.load.image('block_on', './assets/block_on.png');
         this.load.image('wall', './assets/wall.png');
+        this.load.image('locked_wall', './assets/wall_locked.png');
         this.load.image('block_danger', './assets/block_danger.png');
         this.load.image('player_danger', './assets/player_danger.png');
         this.load.image('cracked_tile', './assets/cracked_tile.png');
@@ -33,14 +34,17 @@ class Play extends Phaser.Scene {
         this.completed = this.physics.add.group();
         this.goal = 0;
         this.gameOver = false;
+        this.unlocked = false;
         // Load map
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
         this.tileset = this.map.addTilesetImage('tileset', null, 32, 32, 0, 0);
         this.layer = this.map.createLayer(0, this.tileset, 0, 0);
 
-        this.wallIDs = [3, 4, 5, 13, 15, 23, 24, 25, 40];
+        this.wallIDs = [3, 4, 5, 13, 15, 23, 24, 25, 40, 71];
         this.crackedIDs = [33, 34, 35];
         this.spikesIDs = [42, 43, 44, 45, 50, 52, 53, 54, 55, 62, 63, 64, 65, 72, 73, 74];
+
+        this.locked_walls = this.physics.add.group();
         
         //this.add.tileSprite(0, 0, game.config.width, game.config.height, 'grid').setOrigin(0, 0).setAlpha(0.2);
 
@@ -48,6 +52,9 @@ class Play extends Phaser.Scene {
             for (var j = 0; j < game.config.height; j += 32) {
                 if (this.layer.getTileAtWorldXY(i, j).index === 40) {
                     this.physics.add.image(i, j, 'wall').setOrigin(0, 0.33).setDepth(j/32);
+                }
+                if (this.layer.getTileAtWorldXY(i, j).index === 71) {
+                    this.locked_walls.add(this.physics.add.image(i, j, 'locked_wall').setOrigin(0, 0.33).setDepth(j/32));
                 }
             }
         }
@@ -189,17 +196,19 @@ class Play extends Phaser.Scene {
             this.block1 = this.physics.add.sprite(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
-        } else if (floor === 2) {
+        }
+        if (floor === 2) {
             this.goal = 2;
             this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5);
             this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
-        } else if (floor === 3) {
+        }
+        if (floor === 3) {
             this.goal = 2;
             this.player = this.physics.add.sprite(32*3, 32*6, 'player').setOrigin(0, 0.5);
             this.block1 = this.physics.add.sprite(32*15, 32*3, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*1, 32*3, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*1, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
 
@@ -289,6 +298,18 @@ class Play extends Phaser.Scene {
             }
         }
 
+        if (this.layer.getTileAtWorldXY(this.block1.x, this.block1.y).index === 70 ||
+            this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
+            this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70) {
+            console.log('unlocked');
+            this.unlocked = true;
+            this.locked_walls.setAlpha(0);
+        } else {
+            console.log('locked');
+            this.unlocked = false;
+            this.locked_walls.setAlpha(1);
+        }
+
         if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3){ // use currentFrame.index to add up total and compare to goal
             this.gameOver = true;
             this.time.delayedCall(3000, () => {
@@ -363,7 +384,7 @@ class Play extends Phaser.Scene {
                         (block.x === this.block2.x && block.y === this.block2.y + 32) ||
                         (block.x === this.block3.x && block.y === this.block3.y + 32)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('upGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -385,7 +406,7 @@ class Play extends Phaser.Scene {
                         (this.player.x === this.block2.x && this.player.y === this.block2.y + 32) ||
                         (this.player.x === this.block3.x && this.player.y === this.block3.y + 32)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('downGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -411,7 +432,7 @@ class Play extends Phaser.Scene {
                                    (this.player.x === this.block2.x && this.player.y === this.block2.y + 32) ||
                                    (this.player.x === this.block3.x && this.player.y === this.block3.y + 32))) {
                 // do nothing
-            } else if (!this.wallIDs.includes(tile.index)) {
+            } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                 if (this.player.anims.currentAnim.key == 'upIdle') {
                     this.player.play('upWalk');
                 }
@@ -434,7 +455,7 @@ class Play extends Phaser.Scene {
                         (block.x === this.block2.x + 32 && block.y === this.block2.y) ||
                         (block.x === this.block3.x + 32 && block.y === this.block3.y)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('sideGrab');
                         this.player.flipX = true;
                         this.push_sfx.play();
@@ -457,7 +478,7 @@ class Play extends Phaser.Scene {
                         (this.player.x === this.block2.x + 32 && this.player.y === this.block2.y) ||
                         (this.player.x === this.block3.x + 32 && this.player.y === this.block3.y)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('sideGrab');
                         this.player.flipX = false;
                         this.push_sfx.play();
@@ -486,7 +507,7 @@ class Play extends Phaser.Scene {
                                    (this.player.x === this.block2.x + 32 && this.player.y === this.block2.y) ||
                                    (this.player.x === this.block3.x + 32 && this.player.y === this.block3.y))) {
                 // do nothing
-            } else if (!this.wallIDs.includes(tile.index)) {
+            } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                 if (this.player.anims.currentAnim.key == 'sideIdle') {
                     this.player.play('sideWalk');
                 }
@@ -509,7 +530,7 @@ class Play extends Phaser.Scene {
                         (block.x === this.block2.x && block.y === this.block2.y - 32) ||
                         (block.x === this.block3.x && block.y === this.block3.y - 32)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('downGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -531,7 +552,7 @@ class Play extends Phaser.Scene {
                         (this.player.x === this.block2.x && this.player.y === this.block2.y - 32) ||
                         (this.player.x === this.block3.x && this.player.y === this.block3.y - 32)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('upGrab');
                         this.push_sfx.play();
                         this.player.moveSpeed = pushSpeed;
@@ -557,7 +578,7 @@ class Play extends Phaser.Scene {
                                    (this.player.x === this.block2.x && this.player.y === this.block2.y - 32) ||
                                    (this.player.x === this.block3.x && this.player.y === this.block3.y - 32))) {
                 // do nothing
-            } else if (!this.wallIDs.includes(tile.index)) {
+            } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                 if (this.player.anims.currentAnim.key == 'downIdle') {
                     this.player.play('downWalk');
                 }
@@ -580,7 +601,7 @@ class Play extends Phaser.Scene {
                         (block.x === this.block2.x - 32 && block.y === this.block2.y) ||
                         (block.x === this.block3.x - 32 && block.y === this.block3.y)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('sideGrab');
                         this.player.flipX = false;
                         this.push_sfx.play();
@@ -603,7 +624,7 @@ class Play extends Phaser.Scene {
                         (this.player.x === this.block2.x - 32 && this.player.y === this.block2.y) ||
                         (this.player.x === this.block3.x - 32 && this.player.y === this.block3.y)) {
                         return;
-                    } else if (!this.wallIDs.includes(tile.index)) {
+                    } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                         this.player.play('sideGrab');
                         this.player.flipX = true;
                         this.push_sfx.play();
@@ -632,7 +653,7 @@ class Play extends Phaser.Scene {
                                    (this.player.x === this.block2.x - 32 && this.player.y === this.block2.y) ||
                                    (this.player.x === this.block3.x - 32 && this.player.y === this.block3.y))) {
                 // do nothing
-            } else if (!this.wallIDs.includes(tile.index)) {
+            } else if (!this.wallIDs.includes(tile.index) || (tile.index === 71 && this.unlocked)) {
                 if (this.player.anims.currentAnim.key == 'sideIdle') {
                     this.player.play('sideWalk');
                 }
