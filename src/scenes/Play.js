@@ -4,13 +4,14 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('grid', './assets/background.png');
-        this.load.image('block_on', './assets/block_on.png');
         this.load.image('wall', './assets/wall.png');
         this.load.image('locked_wall', './assets/wall_locked.png');
-        this.load.image('block_danger', './assets/block_danger.png');
-        this.load.image('player_danger', './assets/player_danger.png');
         this.load.image('cracked_tile', './assets/cracked_tile.png');
+        this.load.image('instructions_0', './assets/instructions_0.png');
+        this.load.image('instructions_1', './assets/instructions_1.png');
+        this.load.image('instructions_2', './assets/instructions_2.png');
+        this.load.image('instructions_3', './assets/instructions_3.png');
+        this.load.image('instructions_4', './assets/instructions_4.png');
 
         this.load.spritesheet('block_a', './assets/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
         this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
@@ -35,7 +36,7 @@ class Play extends Phaser.Scene {
         //setting up variables for end of level
         this.completed = this.physics.add.group();
         this.goal = 0;
-        this.gameOver = false;
+        this.gameOver = true;
         this.unlocked = false;
         // Load map
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
@@ -48,8 +49,6 @@ class Play extends Phaser.Scene {
 
         this.locked_walls = this.physics.add.group();
         
-        //this.add.tileSprite(0, 0, game.config.width, game.config.height, 'grid').setOrigin(0, 0).setAlpha(0.2);
-
         for (var i = 0; i < game.config.width; i += 32) {
             for (var j = 0; j < game.config.height; j += 32) {
                 if (this.layer.getTileAtWorldXY(i, j).index === 40) {
@@ -209,8 +208,8 @@ class Play extends Phaser.Scene {
         if (floor === 2) {
             this.goal = 2;
             this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5).play('sideIdle');
-            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
             this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 3) {
@@ -244,8 +243,17 @@ class Play extends Phaser.Scene {
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
-        
 
+        this.instructions = this.add.image(0, game.config.height, 'instructions_' + floor).setOrigin(0).setDepth(12).setAlpha(0);
+        this.time.delayedCall(1000, () => {
+            this.tweens.add({
+                targets: [this.instructions],
+                alpha: 1,
+                y: 0,
+                duration: 1000,
+                ease: 'Back.easeOut'
+            });
+        });
     }
 
     update() {
@@ -351,6 +359,18 @@ class Play extends Phaser.Scene {
         }
         // If shift key is held down, player can move block
         if (keySHIFT.isDown) {
+            if (this.instructions.alpha === 1) {
+                this.tweens.add({
+                    targets: [this.instructions],
+                    alpha: 0,
+                    y: game.config.height,
+                    duration: 1000,
+                    ease: 'Back.easeIn'
+                });
+                this.time.delayedCall(1000, () => {
+                    this.gameOver = false;
+                });
+            }
             if ((Math.abs(this.player.x - this.block1.x) == 32 && this.player.y == this.block1.y) || 
                 (this.player.x == this.block1.x && Math.abs(this.player.y - this.block1.y) == 32)) {
                 this.player.grab = true;
