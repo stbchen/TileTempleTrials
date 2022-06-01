@@ -263,12 +263,13 @@ class Play extends Phaser.Scene {
             this.tweens.add ({
                 targets: [this.player],
                 alpha: 0,
+                y: this.player.y - 10,
                 duration: 1500,
                 ease: 'Power1'
             });
             this.tweens.add ({
-                targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)],
-                alpha: 0.5,
+                targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)], // WHY ISN'T THIS WORKING?!?!?!?!
+                alpha: 0.25,
                 duration: 1500,
                 ease: 'Power1'
             });
