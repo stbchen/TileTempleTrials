@@ -23,10 +23,7 @@ class Play extends Phaser.Scene {
         this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
         this.load.tilemapCSV('floor_4', './assets/floor_4.csv');
 
-        this.load.spritesheet('player_walk', './assets/PlayerWalk.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
-        this.load.spritesheet('player_walk_back', './assets/PlayerWalkBack.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
-
-        this.load.atlas('player', './assets/playerAtlas.png', './assets/playerAtlas.json');
+        this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
 
         this.load.audio('sfx_step', './assets/step.mp3');
         this.load.audio('sfx_push', './assets/push.mp3');
@@ -227,7 +224,7 @@ class Play extends Phaser.Scene {
             this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
         }
 
-        this.player.setSize(32, 32).setOffset(0, 32);
+        this.player.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false;
         this.player.grab1 = false;
@@ -263,8 +260,6 @@ class Play extends Phaser.Scene {
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
             this.gameOver = true;
-            this.player.setOrigin(0.5);
-            this.player.x += 16;
             this.tweens.add ({
                 targets: [this.player],
                 alpha: 0,
@@ -371,22 +366,22 @@ class Play extends Phaser.Scene {
                     this.gameOver = false;
                 });
             }
-            if ((Math.abs(this.player.x - this.block1.x) == 32 && this.player.y == this.block1.y) || 
-                (this.player.x == this.block1.x && Math.abs(this.player.y - this.block1.y) == 32)) {
+            if (((Math.abs(this.player.x - this.block1.x) == 32 && this.player.y == this.block1.y) || 
+                (this.player.x == this.block1.x && Math.abs(this.player.y - this.block1.y) == 32)) && !this.grab) {
                 this.player.grab = true;
                 this.player.grab1 = true
                 this.player.grab2 = false;
                 this.player.grab3 = false
             }
-            if ((Math.abs(this.player.x - this.block2.x) == 32 && this.player.y == this.block2.y) || 
-                (this.player.x == this.block2.x && Math.abs(this.player.y - this.block2.y) == 32)) {
+            if (((Math.abs(this.player.x - this.block2.x) == 32 && this.player.y == this.block2.y) || 
+                (this.player.x == this.block2.x && Math.abs(this.player.y - this.block2.y) == 32)) && !this.grab) {
                 this.player.grab = true;
                 this.player.grab1 = false
                 this.player.grab2 = true;
                 this.player.grab3 = false
             }
-            if ((Math.abs(this.player.x - this.block3.x) == 32 && this.player.y == this.block3.y) || 
-                (this.player.x == this.block3.x && Math.abs(this.player.y - this.block3.y) == 32)) {
+            if (((Math.abs(this.player.x - this.block3.x) == 32 && this.player.y == this.block3.y) || 
+                (this.player.x == this.block3.x && Math.abs(this.player.y - this.block3.y) == 32)) && !this.grab) {
                 this.player.grab = true;
                 this.player.grab1 = false
                 this.player.grab2 = false;
