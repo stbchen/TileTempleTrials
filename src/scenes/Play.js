@@ -268,7 +268,7 @@ class Play extends Phaser.Scene {
                 ease: 'Power1'
             });
             this.tweens.add ({
-                targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)], // WHY ISN'T THIS WORKING?!?!?!?!
+                targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)],
                 alpha: 0.25,
                 duration: 1500,
                 ease: 'Power1'
@@ -318,7 +318,8 @@ class Play extends Phaser.Scene {
 
         if (this.layer.getTileAtWorldXY(this.block1.x, this.block1.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
-            this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70) {
+            this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70 ||
+            this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 70) {
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
@@ -397,7 +398,18 @@ class Play extends Phaser.Scene {
 
         //go back to main menu
         if (keyESC.isDown) {
-            this.scene.start('menuScene')
+            if (this.instructions.alpha === 0) {
+                this.gameOver = true;
+                this.tweens.add({
+                    targets: [this.instructions],
+                    alpha: 1,
+                    y: 0,
+                    duration: 1000,
+                    ease: 'Back.easeOut'
+                }); 
+            } else {
+                //this.scene.start('menuScene');
+            }
         }
     }
 
