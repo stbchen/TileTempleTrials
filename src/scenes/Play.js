@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
         this.load.image('instructions_2', './assets/instructions_2.png');
         this.load.image('instructions_3', './assets/instructions_3.png');
         this.load.image('instructions_4', './assets/instructions_4.png');
+        this.load.image('grab', './assets/grab_outline.png');
 
         this.load.spritesheet('block_a', './assets/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
         this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
@@ -227,15 +228,17 @@ class Play extends Phaser.Scene {
         this.player.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
         this.player.setCollideWorldBounds(true);
         this.player.grab = false;
-        this.player.grab1 = false;
-        this.player.grab2 = false;
-        this.player.grab3 = false;
+        this.player.grab_num = 0;
+        this.player.grab_dir = "";
         this.player.moveSpeed = walkSpeed;
 
         this.blocks = this.physics.add.group();
         this.blocks.add(this.block1);
         this.blocks.add(this.block2);
         this.blocks.add(this.block3);
+
+        this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab');
+        this.grab.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
 
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
@@ -256,6 +259,7 @@ class Play extends Phaser.Scene {
     update() {
         // setting depth levels
         this.player.setDepth(this.player.y/32);
+    
         //checking for hazards
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
@@ -316,6 +320,26 @@ class Play extends Phaser.Scene {
             }
         }
 
+        this.grab.setDepth(this.grab.y/32);
+
+        let anim_substr = this.player.anims.currentAnim.key.substring(0, 1);
+        if (anim_substr === 'u') {
+            this.grab.x = this.player.x;
+            this.grab.y = this.player.y - 32;
+        }
+        if (anim_substr === 'd') {
+            this.grab.x = this.player.x;
+            this.grab.y = this.player.y + 32;
+        }
+        if (anim_substr === 's') {
+            if (this.player.flipX) {
+                this.grab.x = this.player.x - 32;
+            } else {
+                this.grab.x = this.player.x + 32;
+            }
+            this.grab.y = this.player.y;
+        }
+
         if (this.layer.getTileAtWorldXY(this.block1.x, this.block1.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70 ||
@@ -341,19 +365,21 @@ class Play extends Phaser.Scene {
 
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
+            //this.new_player_input();
             if (!this.player.grab) {
                 this.player_input();
             }
-            if (this.player.grab1) {
+            if (this.player.grab_num === 1) {
                 this.player_input(this.block1);
             }
-            if (this.player.grab2) {
+            if (this.player.grab_num === 2) {
                 this.player_input(this.block2);
             }
-            if (this.player.grab3) {
+            if (this.player.grab3 === 3) {
                 this.player_input(this.block3);
             }
         }
+
         // If shift key is held down, player can move block
         if (keySHIFT.isDown) {
             if (this.instructions.alpha === 1) {
@@ -367,33 +393,14 @@ class Play extends Phaser.Scene {
                 this.time.delayedCall(1000, () => {
                     this.gameOver = false;
                 });
-            }
-            if (((Math.abs(this.player.x - this.block1.x) == 32 && this.player.y == this.block1.y) || 
-                (this.player.x == this.block1.x && Math.abs(this.player.y - this.block1.y) == 32)) && !this.grab) {
-                this.player.grab = true;
-                this.player.grab1 = true
-                this.player.grab2 = false;
-                this.player.grab3 = false
-            }
-            if (((Math.abs(this.player.x - this.block2.x) == 32 && this.player.y == this.block2.y) || 
-                (this.player.x == this.block2.x && Math.abs(this.player.y - this.block2.y) == 32)) && !this.grab) {
-                this.player.grab = true;
-                this.player.grab1 = false
-                this.player.grab2 = true;
-                this.player.grab3 = false
-            }
-            if (((Math.abs(this.player.x - this.block3.x) == 32 && this.player.y == this.block3.y) || 
-                (this.player.x == this.block3.x && Math.abs(this.player.y - this.block3.y) == 32)) && !this.grab) {
-                this.player.grab = true;
-                this.player.grab1 = false
-                this.player.grab2 = false;
-                this.player.grab3 = true;
+            } else {
+                this.grab_check();
             }
         } else {
+            this.grab.setAlpha(0);
             this.player.grab = false;
-            this.player.grab1 = false
-            this.player.grab2 = false;
-            this.player.grab3 = false;
+            this.player.grab_num = 0;
+            this.player.grab_dir = '';
         }
 
         //go back to main menu
@@ -407,15 +414,54 @@ class Play extends Phaser.Scene {
                     duration: 1000,
                     ease: 'Back.easeOut'
                 }); 
-            } else {
-                //this.scene.start('menuScene');
+            } else if (this.instructions.alpha === 1) {
+                this.scene.start('menuScene');
             }
         }
     }
 
+    grab_check() {
+        this.player.grab = false;
+        this.player.grab_num = 0;
+        this.player.grab_dir = "";
+
+        if (this.grab.x === this.block1.x && this.grab.y == this.block1.y) {
+            this.grab.setDepth(this.block1.y/32 + 1).setAlpha(1);
+            this.player.grab = true;
+            this.player.grab_num = 1;
+        }
+
+        if (this.grab.x === this.block2.x && this.grab.y == this.block2.y) {
+            this.grab.setDepth(this.block2.y/32 + 1).setAlpha(1);
+            this.player.grab = true;
+            this.player.grab_num = 2;
+        }
+        if (this.grab.x === this.block3.x && this.grab.y == this.block3.y) {
+            this.grab.setDepth(this.block3.y/32 + 1).setAlpha(1);
+            this.player.grab = true;
+            this.player.grab_num = 3;
+        }
+
+        if (this.player.grab) {
+            if (this.grab.x === this.player.x - 32) {
+                this.player.grab_dir = "R";
+            }
+            if (this.grab.x === this.player.x + 32) {
+                this.player.grab_dir = "L";
+            }
+            if (this.grab.y === this.player.y - 32) {
+                this.player.grab_dir = "U";
+            }
+            if (this.grab.y === this.player.y + 32) {
+                this.player.grab_dir = "D";
+            }
+        }
+        
+    }
+
     player_input(block = null) {
         var tile;
-        if (keyW.isDown && !keyA.isDown && !keyD.isDown) {
+        if (keyW.isDown && !keyA.isDown && !keyD.isDown && this.player.grab_dir != "R" && this.player.grab_dir != "L") {
             if (block != null && this.player.x === block.x && this.player.y === block.y + 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
@@ -486,7 +532,7 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (keyA.isDown && !keyW.isDown && !keyS.isDown) {
+        if (keyA.isDown && !keyW.isDown && !keyS.isDown && this.player.grab_dir != "U" && this.player.grab_dir != "D") {
             if (block != null && this.player.x === block.x + 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
@@ -561,7 +607,7 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (keyS.isDown && !keyA.isDown && !keyD.isDown) {
+        if (keyS.isDown && !keyA.isDown && !keyD.isDown && this.player.grab_dir != "R" && this.player.grab_dir != "L") {
             if (block != null && this.player.x === block.x && this.player.y === block.y - 32) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
@@ -632,7 +678,7 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (keyD.isDown && !keyW.isDown && !keyS.isDown) {
+        if (keyD.isDown && !keyW.isDown && !keyS.isDown && this.player.grab_dir != "U" && this.player.grab_dir != "D") {
             if (block != null && this.player.x === block.x - 32 && this.player.y === block.y) {
                 if (this.player.grab) {
                     this.player.moveSpeed = pushSpeed;
@@ -706,5 +752,83 @@ class Play extends Phaser.Scene {
                 });
             }
         }        
+    }
+
+    new_player_input() {
+        var tile;
+
+        if (keyW.isDown && !keyA.isDown && !keyD.isDown) {
+            this.player.play('upIdle');
+
+            this.player.moveSpeed = walkSpeed;
+
+            tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y - 32);
+            if (!this.wallIDs.includes(tile.index)) {
+                this.player.play('upWalk')
+                this.step_sfx.play();
+                this.tweens.add ({
+                    targets: [this.player],
+                    y: this.player.y - 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            }
+        }
+
+        if (keyA.isDown && !keyW.isDown && !keyS.isDown) {
+            this.player.play('sideIdle');
+            this.player.flipX = true;
+
+            this.player.moveSpeed = walkSpeed;
+
+            tile = this.layer.getTileAtWorldXY(this.player.x - 32, this.player.y);
+            if (!this.wallIDs.includes(tile.index)) {
+                this.player.play('sideWalk')
+                this.step_sfx.play();
+                this.tweens.add ({
+                    targets: [this.player],
+                    x: this.player.x - 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            }
+        }
+
+        if (keyS.isDown && !keyA.isDown && !keyD.isDown) {
+            this.player.play('downIdle');
+
+            this.player.moveSpeed = walkSpeed;
+
+            tile = this.layer.getTileAtWorldXY(this.player.x, this.player.y + 32);
+            if (!this.wallIDs.includes(tile.index)) {
+                this.player.play('downWalk')
+                this.step_sfx.play();
+                this.tweens.add ({
+                    targets: [this.player],
+                    y: this.player.y + 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            }
+        }
+
+        if (keyD.isDown && !keyW.isDown && !keyS.isDown) {
+            this.player.play('sideIdle');
+            this.player.flipX = false;
+
+            this.player.moveSpeed = walkSpeed;
+
+            tile = this.layer.getTileAtWorldXY(this.player.x + 32, this.player.y);
+            if (!this.wallIDs.includes(tile.index)) {
+                this.player.play('sideWalk')
+                this.step_sfx.play();
+                this.tweens.add ({
+                    targets: [this.player],
+                    x: this.player.x + 32,
+                    duration: this.player.moveSpeed,
+                    ease: 'Power1'
+                });
+            }
+        }
     }
 }
