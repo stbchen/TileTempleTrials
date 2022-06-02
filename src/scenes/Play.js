@@ -369,6 +369,12 @@ class Play extends Phaser.Scene {
         if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3){ // use currentFrame.index to add up total and compare to goal
             this.gameOver = true;
             this.time.delayedCall(3000, () => {
+                this.tweens.add({
+                    targets: [this.bgm],
+                    volume: 0,
+                    duration: 1500
+                })
+                this.bgm.stop();
                 floor++;
                 if (floor === 5) {
                     this.scene.start('victoryScene');
