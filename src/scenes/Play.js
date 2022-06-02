@@ -226,8 +226,7 @@ class Play extends Phaser.Scene {
             this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
         }
 
-        this.player.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-        this.player.setCollideWorldBounds(true);
+        this.player.setSize(32, 32).setOffset(0, 32);
         this.player.grab = false;
         this.player.grab_num = 0;
         this.player.grab_dir = "";
@@ -238,7 +237,7 @@ class Play extends Phaser.Scene {
         this.blocks.add(this.block2);
         this.blocks.add(this.block3);
 
-        this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab');
+        this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab').setAlpha(0);
         this.grab.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
 
         // Load sfx
@@ -424,7 +423,6 @@ class Play extends Phaser.Scene {
                 this.grab_check();
             }
         } else {
-            this.grab.setAlpha(0);
             this.player.grab = false;
             this.player.grab_num = 0;
             this.player.grab_dir = '';
@@ -465,18 +463,18 @@ class Play extends Phaser.Scene {
         this.player.grab_dir = "";
 
         if (this.grab.x === this.block1.x && this.grab.y == this.block1.y) {
-            this.grab.setDepth(this.block1.y/32 + 1).setAlpha(1);
+            this.grab.setDepth(this.block1.y/32 + 1);
             this.player.grab = true;
             this.player.grab_num = 1;
         }
 
         if (this.grab.x === this.block2.x && this.grab.y == this.block2.y) {
-            this.grab.setDepth(this.block2.y/32 + 1).setAlpha(1);
+            this.grab.setDepth(this.block2.y/32 + 1);
             this.player.grab = true;
             this.player.grab_num = 2;
         }
         if (this.grab.x === this.block3.x && this.grab.y == this.block3.y) {
-            this.grab.setDepth(this.block3.y/32 + 1).setAlpha(1);
+            this.grab.setDepth(this.block3.y/32 + 1);
             this.player.grab = true;
             this.player.grab_num = 3;
         }
