@@ -366,14 +366,16 @@ class Play extends Phaser.Scene {
             this.locked_walls.setAlpha(1);
         }
 
-        if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3){ // use currentFrame.index to add up total and compare to goal
+        if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3) {
             this.gameOver = true;
-            this.time.delayedCall(3000, () => {
+            if (this.bgm.volume === 1) {
                 this.tweens.add({
                     targets: [this.bgm],
                     volume: 0,
                     duration: 1500
-                })
+                });
+            }
+            this.time.delayedCall(3000, () => {
                 this.bgm.stop();
                 floor++;
                 if (floor === 5) {
@@ -445,6 +447,11 @@ class Play extends Phaser.Scene {
                     duration: 1000
                 })
             } else if (this.instructions.alpha === 1) {
+                this.tweens.add({
+                    targets: [this.bgm],
+                    volume: 0,
+                    duration: 1000
+                })
                 this.bgm.stop();
                 this.scene.start('menuScene');
             }
