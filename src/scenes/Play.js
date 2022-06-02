@@ -28,6 +28,7 @@ class Play extends Phaser.Scene {
 
         this.load.audio('sfx_step', './assets/step.mp3');
         this.load.audio('sfx_push', './assets/push.mp3');
+        this.load.audio('bgm', './assets/bgm.mp3');
     }
 
     create() {
@@ -243,6 +244,8 @@ class Play extends Phaser.Scene {
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
+        this.bgm = this.sound.add('bgm').setLoop(true);
+        this.bgm.play({volume: 0.25});
 
         this.instructions = this.add.image(0, game.config.height, 'instructions_' + floor).setOrigin(0).setDepth(12).setAlpha(0);
         this.time.delayedCall(1000, () => {
@@ -277,7 +280,13 @@ class Play extends Phaser.Scene {
                 duration: 1500,
                 ease: 'Power1'
             });
+            this.tweens.add({
+                targets: [this.bgm],
+                volume: 0,
+                duration: 1500
+            })
             this.time.delayedCall(3000, () => {
+                this.bgm.stop();
                 this.scene.restart();
             });
         }
@@ -301,7 +310,13 @@ class Play extends Phaser.Scene {
                     duration: 1500,
                     ease: 'Power1'
                 });
+                this.tweens.add({
+                    targets: [this.bgm],
+                    volume: 0,
+                    duration: 1500
+                })
                 this.time.delayedCall(3000, () => {
+                    this.bgm.stop();
                     this.scene.restart();
                 });
             }
@@ -365,7 +380,6 @@ class Play extends Phaser.Scene {
 
         // Checking if player is in tile, then call input function
         if (this.player.x % 32 == 0 && this.player.y % 32 == 0 && !this.gameOver) {
-            //this.new_player_input();
             if (!this.player.grab) {
                 this.player_input();
             }
@@ -390,6 +404,11 @@ class Play extends Phaser.Scene {
                     duration: 1000,
                     ease: 'Back.easeIn'
                 });
+                this.tweens.add({
+                    targets: [this.bgm],
+                    volume: 1,
+                    duration: 1000
+                })
                 this.time.delayedCall(1000, () => {
                     this.gameOver = false;
                 });
@@ -413,13 +432,20 @@ class Play extends Phaser.Scene {
                     y: 0,
                     duration: 1000,
                     ease: 'Back.easeOut'
-                }); 
+                });
+                this.tweens.add({
+                    targets: [this.bgm],
+                    volume: 0.25,
+                    duration: 1000
+                })
             } else if (this.instructions.alpha === 1) {
+                this.bgm.stop();
                 this.scene.start('menuScene');
             }
         }
     }
 
+    //function to check which block is being grabbed and which direction it is relative to player
     grab_check() {
         this.player.grab = false;
         this.player.grab_num = 0;
