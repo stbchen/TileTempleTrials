@@ -13,6 +13,7 @@ class Play extends Phaser.Scene {
         this.load.image('instructions_3', './assets/instructions_3.png');
         this.load.image('instructions_4', './assets/instructions_4.png');
         this.load.image('grab', './assets/grab_outline.png');
+        this.load.image('pause', './assets/pause.png');
 
         this.load.spritesheet('block_a', './assets/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
         this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
@@ -240,6 +241,8 @@ class Play extends Phaser.Scene {
         this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab').setAlpha(0);
         this.grab.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
 
+        this.pause = this.physics.add.image(4, game.config.height - 4, 'pause').setOrigin(0, 1).setAlpha(0).setDepth(12).setScale(0.6);
+
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
@@ -415,9 +418,15 @@ class Play extends Phaser.Scene {
                     targets: [this.bgm],
                     volume: 1,
                     duration: 1000
-                })
+                });
                 this.time.delayedCall(1000, () => {
                     this.gameOver = false;
+                    this.tweens.add({
+                        targets: [this.pause],
+                        alpha: 1,
+                        duration: 1000,
+                        ease: 'power1'
+                    });
                 });
             } else {
                 this.grab_check();
@@ -430,7 +439,7 @@ class Play extends Phaser.Scene {
 
         //go back to main menu
         if (keyESC.isDown) {
-            if (this.instructions.alpha === 0) {
+            if (this.instructions.alpha === 0 && !this.gameOver) {
                 this.gameOver = true;
                 this.tweens.add({
                     targets: [this.instructions],
@@ -443,7 +452,13 @@ class Play extends Phaser.Scene {
                     targets: [this.bgm],
                     volume: 0.25,
                     duration: 1000
-                })
+                });
+                this.tweens.add({
+                    targets: [this.pause],
+                    alpha: 0,
+                    duration: 1000,
+                    ease: 'power1'
+                });
             } else if (this.instructions.alpha === 1) {
                 this.tweens.add({
                     targets: [this.bgm],
