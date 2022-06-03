@@ -396,7 +396,7 @@ class Play extends Phaser.Scene {
             if (this.player.grab_num === 2) {
                 this.player_input(this.block2);
             }
-            if (this.player.grab3 === 3) {
+            if (this.player.grab_num === 3) {
                 this.player_input(this.block3);
             }
         }
