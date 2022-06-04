@@ -39,6 +39,7 @@ class Play extends Phaser.Scene {
         this.gameOver = true;
         this.unlocked = false;
         // Load map
+        
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
         this.tileset = this.map.addTilesetImage('tileset', null, 32, 32, 0, 0);
         this.layer = this.map.createLayer(0, this.tileset, 0, 0);
@@ -193,41 +194,41 @@ class Play extends Phaser.Scene {
         // Floor-specific setup
         if (floor === 0) {
             this.goal = 1;
-            this.player = this.physics.add.sprite(32*10, 32*8, 'player').setOrigin(0, 0.5).play('upIdle');
-            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
-            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.player = this.physics.add.sprite(32*10, 32*8, 'player').play('upIdle');
+            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 1) {
             this.goal = 1;
-            this.player = this.physics.add.sprite(32*2, 32*5, 'player').setOrigin(0, 0.5).play('sideIdle');
-            this.block1 = this.physics.add.sprite(32*4, 32*4, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
-            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.player = this.physics.add.sprite(32*2, 32*5, 'player').play('sideIdle');
+            this.block1 = this.physics.add.sprite(32*4, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 2) {
             this.goal = 2;
-            this.player = this.physics.add.sprite(32*2, 32*4, 'player').setOrigin(0, 0.5).play('sideIdle');
-            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
-            this.block3 = this.physics.add.sprite(0, 0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.player = this.physics.add.sprite(32*2, 32*4, 'player').play('sideIdle');
+            this.block1 = this.physics.add.sprite(32*6, 32*2, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*6, 32*7, 'block_b').play({key: 'glow_b', startFrame: 0});
+            this.block3 = this.physics.add.sprite(0, 0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor === 3) {
             this.goal = 2;
-            this.player = this.physics.add.sprite(32*10, 32*2, 'player').setOrigin(0, 0.5).play('downIdle');
-            this.block1 = this.physics.add.sprite(32*15, 32*3, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*1, 32*2, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+            this.player = this.physics.add.sprite(32*10, 32*2, 'player').play('downIdle');
+            this.block1 = this.physics.add.sprite(32*15, 32*3, 'block_b').play({key: 'glow_b', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*1, 32*2, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
         if (floor == 4) {
             this.goal = 3;
-            this.player = this.physics.add.sprite(32*9, 32*4, 'player').setOrigin(0, 0.5).play('downIdle');
-            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block2 = this.physics.add.sprite(32*3, 32*8, 'block_a').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_a', startFrame: 0});
-            this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16).play({key: 'glow_b', startFrame: 0});
+            this.player = this.physics.add.sprite(32*9, 32*4, 'player').play('downIdle');
+            this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*3, 32*8, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').play({key: 'glow_b', startFrame: 0});
         }
 
-        this.player.setSize(32, 32).setOffset(0, 32);
+        this.player.setSize(32, 32).setOffset(0, 32).setOrigin(0, 0.5);
         this.player.grab = false;
         this.player.grab_num = 0;
         this.player.grab_dir = "";
@@ -237,10 +238,12 @@ class Play extends Phaser.Scene {
         this.blocks.add(this.block1);
         this.blocks.add(this.block2);
         this.blocks.add(this.block3);
+        this.blocks.getChildren().forEach((block) => {
+            block.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
+            block.on_goal = false;
+        })
 
         this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab').setAlpha(0);
-        this.grab.setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
-
         this.pause = this.physics.add.image(4, game.config.height - 4, 'pause').setOrigin(0, 1).setAlpha(0).setDepth(12).setScale(0.6);
 
         // Load sfx
@@ -326,18 +329,26 @@ class Play extends Phaser.Scene {
             if (block.x % 32 === 0 && block.y % 32 === 0) {
                 if (this.layer.getTileAtWorldXY(block.x, block.y).index === 30 && block.texture.key === 'block_a') {
                     block.anims.play({key: 'glow_a', startFrame: 1});
+                    if (!block.on_goal) {
+                        this.cameras.main.shake(250, 0.01);
+                        block.on_goal = true;
+                    }
                 } else if (block.texture.key === 'block_a') {
                     block.anims.play({key: 'glow_a', startFrame: 0});
+                    block.on_goal = false;
                 }
                 if (this.layer.getTileAtWorldXY(block.x, block.y).index === 60 && block.texture.key === 'block_b') {
                     block.play({key: 'glow_b', startFrame: 1});
+                    if (!block.on_goal) {
+                        this.cameras.main.shake(250, 0.01);
+                        block.on_goal = true;
+                    }
                 } else if (block.texture.key === 'block_b') {
                     block.anims.play({key: 'glow_b', startFrame: 0});
+                    block.on_goal = false;
                 }
             }
         }
-
-        this.grab.setDepth(this.grab.y/32);
 
         let anim_substr = this.player.anims.currentAnim.key.substring(0, 1);
         if (anim_substr === 'u') {
@@ -380,7 +391,7 @@ class Play extends Phaser.Scene {
             this.time.delayedCall(3000, () => {
                 this.bgm.stop();
                 floor++;
-                if (floor === 5) {
+                if (floor === end) {
                     this.scene.start('victoryScene');
                 } else {
                     this.scene.restart();
@@ -530,7 +541,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             y: block.y - 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -552,7 +563,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             y: block.y - 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -579,7 +590,7 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     y: this.player.y - 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power1'
+                    ease: 'Power2'
                 });
             }
         }
@@ -602,7 +613,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             x: block.x - 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -625,7 +636,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             x: block.x - 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -654,7 +665,7 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     x: this.player.x - 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power1'
+                    ease: 'Power2'
                 });
             }
         }
@@ -676,7 +687,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             y: block.y + 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -698,7 +709,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             y: block.y + 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -725,7 +736,7 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     y: this.player.y + 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power1'
+                    ease: 'Power2'
                 });
             }
         }
@@ -748,7 +759,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             x: block.x + 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -771,7 +782,7 @@ class Play extends Phaser.Scene {
                             targets: [block],
                             x: block.x + 32,
                             duration: this.player.moveSpeed,
-                            ease: 'Power1'
+                            ease: 'Power2'
                         });
                     }
                 } else {
@@ -800,7 +811,7 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     x: this.player.x + 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power1'
+                    ease: 'Power2'
                 });
             }
         }        

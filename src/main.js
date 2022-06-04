@@ -16,10 +16,11 @@ let config = {
   scene: [Menu, Play, Victory],
 };
 
-let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC, keyCTRL;
+let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC;
 
 let pushSpeed = 600;
 let walkSpeed = 200;
 let floor;
+let end = 5;
 
 let game = new Phaser.Game(config);
