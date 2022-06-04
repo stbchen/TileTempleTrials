@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
         this.load.image('instructions_2', './assets/instructions_2.png');
         this.load.image('instructions_3', './assets/instructions_3.png');
         this.load.image('instructions_4', './assets/instructions_4.png');
+        this.load.image('instructions_5', './assets/instructions_5.png');
         this.load.image('grab', './assets/grab_outline.png');
         this.load.image('pause', './assets/pause.png');
 
@@ -24,11 +25,13 @@ class Play extends Phaser.Scene {
         this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
         this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
         this.load.tilemapCSV('floor_4', './assets/floor_4.csv');
+        this.load.tilemapCSV('floor_5', './assets/floor_5.csv');
 
         this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
 
         this.load.audio('sfx_step', './assets/step.mp3');
         this.load.audio('sfx_push', './assets/push.mp3');
+        this.load.audio('sfx_click', './assets/click.mp3');
         this.load.audio('bgm', './assets/bgm.mp3');
     }
 
@@ -227,6 +230,13 @@ class Play extends Phaser.Scene {
             this.block2 = this.physics.add.sprite(32*3, 32*8, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').play({key: 'glow_b', startFrame: 0});
         }
+        if (floor == 5) {
+            this.goal = 3;
+            this.player = this.physics.add.sprite(32*5, 32*5, 'player').play('sideIdle');
+            this.block1 = this.physics.add.sprite(32*2, 32*3, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*17, 32*3, 'block_b').play({key: 'glow_b', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        }
 
         this.player.setSize(32, 32).setOffset(0, 32).setOrigin(0, 0.5);
         this.player.grab = false;
@@ -249,6 +259,7 @@ class Play extends Phaser.Scene {
         // Load sfx
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
+        this.click_sfx = this.sound.add('sfx_click').setLoop(false);
         this.bgm = this.sound.add('bgm').setLoop(true);
         this.bgm.play({volume: 0.25});
 
@@ -330,6 +341,7 @@ class Play extends Phaser.Scene {
                 if (this.layer.getTileAtWorldXY(block.x, block.y).index === 30 && block.texture.key === 'block_a') {
                     block.anims.play({key: 'glow_a', startFrame: 1});
                     if (!block.on_goal) {
+                        this.click_sfx.play();
                         this.cameras.main.shake(250, 0.01);
                         block.on_goal = true;
                     }
@@ -340,6 +352,7 @@ class Play extends Phaser.Scene {
                 if (this.layer.getTileAtWorldXY(block.x, block.y).index === 60 && block.texture.key === 'block_b') {
                     block.play({key: 'glow_b', startFrame: 1});
                     if (!block.on_goal) {
+                        this.click_sfx.play();
                         this.cameras.main.shake(250, 0.01);
                         block.on_goal = true;
                     }
