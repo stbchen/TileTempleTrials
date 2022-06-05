@@ -282,6 +282,7 @@ class Play extends Phaser.Scene {
         //checking for hazards
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
+            // SPIKES SFX HERE
             this.gameOver = true;
             this.tweens.add ({
                 targets: [this.player],
@@ -315,6 +316,7 @@ class Play extends Phaser.Scene {
             if (block.x % 32 === 0 && block.y % 32 === 0 && 
                 this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
                 this.gameOver = true;
+                // BLOCK FALL SFX HERE
                 this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
                 block.setDepth(1).setOrigin(0.5, 0.33);
                 block.x += 16;
@@ -385,9 +387,11 @@ class Play extends Phaser.Scene {
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 70) {
+            // DOOR OPEN SFX HERE
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
+            // DOOR CLOSE SFX HERE
             this.unlocked = false;
             this.locked_walls.setAlpha(1);
         }
