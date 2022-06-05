@@ -44,7 +44,6 @@ class Play extends Phaser.Scene {
         this.load.audio('sfx_step', './assets/step.mp3');
         this.load.audio('sfx_push', './assets/push.mp3');
         this.load.audio('sfx_click', './assets/click.mp3');
-        this.load.audio('bgm', './assets/bgm.mp3');
         this.load.audio('sfx_spike', './assets/spike.wav');
         this.load.audio('sfx_door_open', './assets/door_open.mp3');
         //this.load.audio('sfx_door_close', './assets/door_close.wav');
@@ -306,8 +305,12 @@ class Play extends Phaser.Scene {
         this.door_open_sfx = this.sound.add('sfx_door_open').setLoop(false);
         this.block_fall_sfx = this.sound.add('sfx_blockfall').setLoop(false);
         this.laser_sfx = this.sound.add('sfx_laser').setLoop(false);
-        this.bgm = this.sound.add('bgm').setLoop(true);
-        this.bgm.play({volume: 0.25});
+
+        this.tweens.add({
+            targets: [bgm],
+            volume: 0.25,
+            duration: 1000
+        });
 
         this.instructions = this.add.image(0, game.config.height, 'instructions_' + floor).setOrigin(0).setDepth(12).setAlpha(0);
         this.time.delayedCall(1000, () => {
@@ -374,12 +377,16 @@ class Play extends Phaser.Scene {
                 ease: 'Power1'
             });
             this.tweens.add({
-                targets: [this.bgm],
+                targets: [bgm],
                 volume: 0,
                 duration: 1500
             })
             this.time.delayedCall(3000, () => {
-                this.bgm.stop();
+                this.tweens.add({
+                    targets: [bgm],
+                    volume: 0,
+                    duration: 1500
+                })
                 this.scene.restart();
             });
         }
@@ -431,12 +438,11 @@ class Play extends Phaser.Scene {
                     ease: 'Power1'
                 });
                 this.tweens.add({
-                    targets: [this.bgm],
+                    targets: [bgm],
                     volume: 0,
                     duration: 1500
                 })
                 this.time.delayedCall(3000, () => {
-                    this.bgm.stop();
                     this.scene.restart();
                 });
             }
@@ -478,15 +484,14 @@ class Play extends Phaser.Scene {
 
         if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3) {
             this.gameOver = true;
-            if (this.bgm.volume === 1) {
+            if (bgm.volume === 1) {
                 this.tweens.add({
-                    targets: [this.bgm],
+                    targets: [bgm],
                     volume: 0,
                     duration: 1500
                 });
             }
             this.time.delayedCall(3000, () => {
-                this.bgm.stop();
                 floor++;
                 if (floor === end) {
                     this.scene.start('victoryScene');
@@ -523,7 +528,7 @@ class Play extends Phaser.Scene {
                     ease: 'Back.easeIn'
                 });
                 this.tweens.add({
-                    targets: [this.bgm],
+                    targets: [bgm],
                     volume: 1,
                     duration: 1000
                 });
@@ -557,7 +562,7 @@ class Play extends Phaser.Scene {
                     ease: 'Back.easeOut'
                 });
                 this.tweens.add({
-                    targets: [this.bgm],
+                    targets: [bgm],
                     volume: 0.25,
                     duration: 1000
                 });
@@ -568,12 +573,7 @@ class Play extends Phaser.Scene {
                     ease: 'power1'
                 });
             } else if (this.instructions.alpha === 1) {
-                this.tweens.add({
-                    targets: [this.bgm],
-                    volume: 0,
-                    duration: 1000
-                })
-                this.bgm.stop();
+                bgm.stop();
                 this.scene.start('menuScene');
             }
         }
@@ -936,12 +936,11 @@ class Play extends Phaser.Scene {
             ease: 'Power1'
         });
         this.tweens.add({
-            targets: [this.bgm],
+            targets: [bgm],
             volume: 0,
             duration: 1500
         })
         this.time.delayedCall(3000, () => {
-            this.bgm.stop();
             this.scene.restart();
         });
     }
