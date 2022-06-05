@@ -33,6 +33,11 @@ class Play extends Phaser.Scene {
         this.load.audio('sfx_push', './assets/push.mp3');
         this.load.audio('sfx_click', './assets/click.mp3');
         this.load.audio('bgm', './assets/bgm.mp3');
+        this.load.audio('sfx_spike', './assets/spike.wav');
+        this.load.audio('sfx_door_open', './assets/door_open.mp3');
+        //this.load.audio('sfx_door_close', './assets/door_close.wav');
+        this.load.audio('sfx_blockfall', './assets/fall.mp3');
+
     }
 
     create() {
@@ -260,6 +265,9 @@ class Play extends Phaser.Scene {
         this.step_sfx = this.sound.add('sfx_step').setLoop(false);
         this.push_sfx = this.sound.add('sfx_push').setLoop(false);
         this.click_sfx = this.sound.add('sfx_click').setLoop(false);
+        this.spike_sfx = this.sound.add('sfx_spike').setLoop(false);
+        this.door_open_sfx = this.sound.add('sfx_door_open').setLoop(false);
+        this.block_fall = this.sound.add('sfx_blockfall').setLoop(false);
         this.bgm = this.sound.add('bgm').setLoop(true);
         this.bgm.play({volume: 0.25});
 
@@ -283,6 +291,7 @@ class Play extends Phaser.Scene {
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
             // SPIKES SFX HERE
+            this.spike_sfx.play();
             this.gameOver = true;
             this.tweens.add ({
                 targets: [this.player],
@@ -317,6 +326,7 @@ class Play extends Phaser.Scene {
                 this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
                 this.gameOver = true;
                 // BLOCK FALL SFX HERE
+                this.block_fall.play();
                 this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
                 block.setDepth(1).setOrigin(0.5, 0.33);
                 block.x += 16;
@@ -387,11 +397,17 @@ class Play extends Phaser.Scene {
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 70) {
-            // DOOR OPEN SFX HERE
+            if (!this.unlocked) {
+                // DOOR OPEN SFX HERE
+                this.door_open_sfx.play();
+            }
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
-            // DOOR CLOSE SFX HERE
+            if (this.unlocked) {
+                // DOOR CLOSE SFX HERE
+                this.door_open_sfx.play();
+            }
             this.unlocked = false;
             this.locked_walls.setAlpha(1);
         }
