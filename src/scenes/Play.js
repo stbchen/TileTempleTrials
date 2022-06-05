@@ -536,7 +536,7 @@ class Play extends Phaser.Scene {
     }
 
     player_input(block = null) {
-        var tile;
+        let tile;
         if (keyW.isDown && !keyA.isDown && !keyD.isDown && this.player.grab_dir != "R" && this.player.grab_dir != "L") {
             if (block != null && this.player.x === block.x && this.player.y === block.y + 32) {
                 if (this.player.grab) {
