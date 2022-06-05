@@ -21,6 +21,6 @@ let keyW, keyA, keyS, keyD, keySHIFT, keyENTER, keyESC;
 let pushSpeed = 600;
 let walkSpeed = 200;
 let floor;
-let end = 5;
+let end = 6;
 
 let game = new Phaser.Game(config);

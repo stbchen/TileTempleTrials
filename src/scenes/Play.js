@@ -6,6 +6,12 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('wall', './assets/wall.png');
         this.load.image('locked_wall', './assets/wall_locked.png');
+        this.load.image('laser_wall_D', './assets/wall_laser_D.png');
+        this.load.image('laser_wall_L', './assets/wall_laser_L.png');
+        this.load.image('laser_wall_R', './assets/wall_laser_R.png');
+        this.load.image('laser_wall_U', './assets/wall_laser_U.png');
+        this.load.image('laser', './assets/laser.png');        
+
         this.load.image('cracked_tile', './assets/cracked_tile.png');
         this.load.image('instructions_0', './assets/instructions_0.png');
         this.load.image('instructions_1', './assets/instructions_1.png');
@@ -21,11 +27,17 @@ class Play extends Phaser.Scene {
 
         this.load.image('tileset', './assets/tileset.png');
         this.load.tilemapCSV('floor_0', './assets/floor_0.csv');
+        this.load.image('floor_0_img', './assets/floor_0.png');
         this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
+        this.load.image('floor_1_img', './assets/floor_1.png');
         this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
+        this.load.image('floor_2_img', './assets/floor_2.png');
         this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
+        this.load.image('floor_3_img', './assets/floor_3.png');
         this.load.tilemapCSV('floor_4', './assets/floor_4.csv');
+        this.load.image('floor_4_img', './assets/floor_4.png');
         this.load.tilemapCSV('floor_5', './assets/floor_5.csv');
+        this.load.image('floor_5_img', './assets/floor_5.png');
 
         this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
 
@@ -37,6 +49,7 @@ class Play extends Phaser.Scene {
         this.load.audio('sfx_door_open', './assets/door_open.mp3');
         //this.load.audio('sfx_door_close', './assets/door_close.wav');
         this.load.audio('sfx_blockfall', './assets/fall.mp3');
+        this.load.audio('sfx_laser', './assets/zap.mp3');
 
     }
 
@@ -52,11 +65,23 @@ class Play extends Phaser.Scene {
         this.tileset = this.map.addTilesetImage('tileset', null, 32, 32, 0, 0);
         this.layer = this.map.createLayer(0, this.tileset, 0, 0);
 
-        this.wallIDs = [3, 4, 5, 13, 15, 23, 24, 25, 40, 71];
+        this.add.image(0, 0, 'floor_' + floor + '_img').setOrigin(0);
+
+        this.wallIDs = [3, 4, 5, 6, 7, 13, 15, 16, 17, 23, 24, 25, 40, 71];
         this.crackedIDs = [33, 34, 35];
         this.spikesIDs = [42, 43, 44, 45, 50, 52, 53, 54, 55, 62, 63, 64, 65, 72, 73, 74];
 
         this.locked_walls = this.physics.add.group();
+        this.laser_walls = this.physics.add.group();
+        this.lasers = this.physics.add.group();
+        this.lasersD = this.physics.add.group();
+        this.lasersL = this.physics.add.group();
+        this.lasersR = this.physics.add.group();
+        this.lasersU = this.physics.add.group();
+        this.lasers.add(this.lasersD);
+        this.lasers.add(this.lasersL);
+        this.lasers.add(this.lasersR);
+        this.lasers.add(this.lasersU);
         
         for (var i = 0; i < game.config.width; i += 32) {
             for (var j = 0; j < game.config.height; j += 32) {
@@ -65,6 +90,18 @@ class Play extends Phaser.Scene {
                 }
                 if (this.layer.getTileAtWorldXY(i, j).index === 71) {
                     this.locked_walls.add(this.physics.add.image(i, j, 'locked_wall').setOrigin(0, 0.33).setDepth(j/32));
+                }
+                if (this.layer.getTileAtWorldXY(i, j).index == 6) {
+                    this.laser_walls.add(this.physics.add.image(i, j, 'laser_wall_U').setOrigin(0, 0.33).setDepth(j/32));
+                }
+                if (this.layer.getTileAtWorldXY(i, j).index == 7) {
+                    this.laser_walls.add(this.physics.add.image(i, j, 'laser_wall_L').setOrigin(0, 0.33).setDepth(j/32));
+                }
+                if (this.layer.getTileAtWorldXY(i, j).index == 16) {
+                    this.laser_walls.add(this.physics.add.image(i, j, 'laser_wall_D').setOrigin(0, 0.33).setDepth(j/32));
+                }
+                if (this.layer.getTileAtWorldXY(i, j).index == 17) {
+                    this.laser_walls.add(this.physics.add.image(i, j, 'laser_wall_R').setOrigin(0, 0.33).setDepth(j/32));
                 }
             }
         }
@@ -236,7 +273,7 @@ class Play extends Phaser.Scene {
             this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').play({key: 'glow_b', startFrame: 0});
         }
         if (floor == 5) {
-            this.goal = 3;
+            this.goal = 2;
             this.player = this.physics.add.sprite(32*5, 32*5, 'player').play('sideIdle');
             this.block1 = this.physics.add.sprite(32*2, 32*3, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*17, 32*3, 'block_b').play({key: 'glow_b', startFrame: 0});
@@ -258,7 +295,7 @@ class Play extends Phaser.Scene {
             block.on_goal = false;
         })
 
-        this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab').setAlpha(0);
+        this.grab = this.physics.add.image(this.player.x + 32, this.player.y, 'grab').setAlpha(0).setOrigin(0, 0.33).setSize(32, 32).setOffset(0, 16);
         this.pause = this.physics.add.image(4, game.config.height - 4, 'pause').setOrigin(0, 1).setAlpha(0).setDepth(12).setScale(0.6);
 
         // Load sfx
@@ -267,7 +304,8 @@ class Play extends Phaser.Scene {
         this.click_sfx = this.sound.add('sfx_click').setLoop(false);
         this.spike_sfx = this.sound.add('sfx_spike').setLoop(false);
         this.door_open_sfx = this.sound.add('sfx_door_open').setLoop(false);
-        this.block_fall = this.sound.add('sfx_blockfall').setLoop(false);
+        this.block_fall_sfx = this.sound.add('sfx_blockfall').setLoop(false);
+        this.laser_sfx = this.sound.add('sfx_laser').setLoop(false);
         this.bgm = this.sound.add('bgm').setLoop(true);
         this.bgm.play({volume: 0.25});
 
@@ -281,17 +319,46 @@ class Play extends Phaser.Scene {
                 ease: 'Back.easeOut'
             });
         });
+
+        for (const wall of this.laser_walls.getChildren()) {
+            if (wall.texture.key === 'laser_wall_D') {
+                for (var i = wall.y + 32; i < game.config.height - 32; i += 32) {
+                    if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
+                        break;
+                    }
+                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laser').setOrigin(0).setDepth(i/32));
+                }
+            }
+        }
     }
 
     update() {
         // setting depth levels
         this.player.setDepth(this.player.y/32);
+
+        // processing lasers
+        for (const laser of this.lasersD.getChildren()) {
+            if ((laser.x === this.block1.x && laser.y >= this.block1.y) ||
+                (laser.x === this.block2.x && laser.y >= this.block2.y) ||
+                (laser.x === this.block3.x && laser.y >= this.block3.y)) {
+                laser.setAlpha(0);
+            } else {
+                laser.setAlpha(1);
+            }
+            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+                this.player_death('laser');
+            }
+        }            
     
         //checking for hazards
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
             this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
-            // SPIKES SFX HERE
-            this.spike_sfx.play();
+            this.player_death('spikes');
+        }
+
+        if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&
+            this.spikesIDs.includes(this.layer.getTileAtWorldXY(this.player.x, this.player.y).index)) {
+            this.spike_sfx.play({volume: 2});
             this.gameOver = true;
             this.tweens.add ({
                 targets: [this.player],
@@ -321,12 +388,37 @@ class Play extends Phaser.Scene {
             // setting depth levels
             block.setDepth(block.y/32);
 
-            //checking for hazards
+            //check if block is on target
+            if (block.x % 32 === 0 && block.y % 32 === 0) {
+                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 30 && block.texture.key === 'block_a') {
+                    block.anims.play({key: 'glow_a', startFrame: 1});
+                    if (!block.on_goal) {
+                        this.click_sfx.play();
+                        this.cameras.main.shake(250, 0.005);
+                        block.on_goal = true;
+                    }
+                } else if (block.texture.key === 'block_a') {
+                    block.anims.play({key: 'glow_a', startFrame: 0});
+                    block.on_goal = false;
+                }
+                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 60 && block.texture.key === 'block_b') {
+                    block.play({key: 'glow_b', startFrame: 1});
+                    if (!block.on_goal) {
+                        this.click_sfx.play();
+                        this.cameras.main.shake(250, 0.005);
+                        block.on_goal = true;
+                    }
+                } else if (block.texture.key === 'block_b') {
+                    block.anims.play({key: 'glow_b', startFrame: 0});
+                    block.on_goal = false;
+                }
+            }
+            
+            // check if block is on cracked tile
             if (block.x % 32 === 0 && block.y % 32 === 0 && 
                 this.crackedIDs.includes(this.layer.getTileAtWorldXY(block.x, block.y).index)) {
                 this.gameOver = true;
-                // BLOCK FALL SFX HERE
-                this.block_fall.play();
+                this.block_fall_sfx.play({volume: 3});
                 this.physics.add.image(block.x, block.y, 'cracked_tile').setOrigin(0);
                 block.setDepth(1).setOrigin(0.5, 0.33);
                 block.x += 16;
@@ -347,31 +439,6 @@ class Play extends Phaser.Scene {
                     this.bgm.stop();
                     this.scene.restart();
                 });
-            }
-            //check if block is on target
-            if (block.x % 32 === 0 && block.y % 32 === 0) {
-                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 30 && block.texture.key === 'block_a') {
-                    block.anims.play({key: 'glow_a', startFrame: 1});
-                    if (!block.on_goal) {
-                        this.click_sfx.play();
-                        this.cameras.main.shake(250, 0.01);
-                        block.on_goal = true;
-                    }
-                } else if (block.texture.key === 'block_a') {
-                    block.anims.play({key: 'glow_a', startFrame: 0});
-                    block.on_goal = false;
-                }
-                if (this.layer.getTileAtWorldXY(block.x, block.y).index === 60 && block.texture.key === 'block_b') {
-                    block.play({key: 'glow_b', startFrame: 1});
-                    if (!block.on_goal) {
-                        this.click_sfx.play();
-                        this.cameras.main.shake(250, 0.01);
-                        block.on_goal = true;
-                    }
-                } else if (block.texture.key === 'block_b') {
-                    block.anims.play({key: 'glow_b', startFrame: 0});
-                    block.on_goal = false;
-                }
             }
         }
 
@@ -395,17 +462,14 @@ class Play extends Phaser.Scene {
 
         if (this.layer.getTileAtWorldXY(this.block1.x, this.block1.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
-            this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70 ||
-            this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 70) {
+            this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70) {
             if (!this.unlocked) {
-                // DOOR OPEN SFX HERE
                 this.door_open_sfx.play();
             }
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
             if (this.unlocked) {
-                // DOOR CLOSE SFX HERE
                 this.door_open_sfx.play();
             }
             this.unlocked = false;
@@ -848,5 +912,37 @@ class Play extends Phaser.Scene {
                 });
             }
         }        
+    }
+
+    player_death(cause) {
+        if (cause === 'spikes') {
+            this.spike_sfx.play({volume: 2});
+        }
+        if (cause === 'laser') {
+            this.laser_sfx.play();
+        }
+        this.gameOver = true;
+        this.tweens.add ({
+            targets: [this.player],
+            alpha: 0,
+            y: this.player.y - 10,
+            duration: 1500,
+            ease: 'Power1'
+        });
+        this.tweens.add ({
+            targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xc40000).setOrigin(0).setAlpha(0).setDepth(11)],
+            alpha: 0.25,
+            duration: 1500,
+            ease: 'Power1'
+        });
+        this.tweens.add({
+            targets: [this.bgm],
+            volume: 0,
+            duration: 1500
+        })
+        this.time.delayedCall(3000, () => {
+            this.bgm.stop();
+            this.scene.restart();
+        });
     }
 }
