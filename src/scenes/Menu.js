@@ -3,7 +3,7 @@ class Menu extends Phaser.Scene {
         super("menuScene");
     }
 
-    preload(){
+    preload() {
         this.load.spritesheet('block1', './assets/menuBlock1.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
         this.load.spritesheet('block2', './assets/menuBlock2.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
         this.load.spritesheet('block3', './assets/menuBlock3.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
@@ -16,10 +16,18 @@ class Menu extends Phaser.Scene {
         this.load.image('logo2', './assets/menuLogo2.png');
         this.load.image('logo3', './assets/menuLogo3.png');
 
+        this.load.image('buttonStart', './assets/menuButtonStart.png');
+        this.load.image('buttonLevel', './assets/menuButtonLevel.png');
+        this.load.image('buttonCredits', './assets/menuButtonCredits.png');
+        this.load.image('buttonBack', './assets/menuButtonBack.png');
+
+        this.load.image('credits', './assets/menuCredits.png');
+
         this.load.audio('bgm', './assets/bgm.mp3');
         this.load.audio('rumble', './assets/rumble.mp3');
         this.load.audio('rumble2', './assets/fall.mp3');
         this.load.audio('slam', './assets/slam.mp3');
+        this.load.audio('click', './assets/click.mp3');
     }
 
     create() {
@@ -70,6 +78,7 @@ class Menu extends Phaser.Scene {
         let rumble = this.sound.add('rumble').setLoop(false);
         let rumble2 = this.sound.add('rumble2').setLoop(false);
         let slam = this.sound.add('slam').setLoop(false);
+        let click = this.sound.add('click').setLoop(false);
         rumble.play({volume: 0.5});
 
         let debris1 = this.add.image(0, game.config.height, 'debris1').setOrigin(0);
@@ -182,15 +191,67 @@ class Menu extends Phaser.Scene {
         this.time.delayedCall(4100, () => {
             bgm.play({volume: 0.25});
 
-            this.add.rectangle(160, 192, 160, 64, 0x8c8c8c).setDepth(0);
+            let credits = this.add.image(5, 30, 'credits').setOrigin(0).setScale(0.9).setAlpha(0);
+
+            let buttonStart = this.add.sprite(65, 166, 'buttonStart').setOrigin(0).setInteractive();
+            buttonStart.on('pointerover', () => {
+                buttonStart.setAlpha(0.8);
+            });
+            buttonStart.on('pointerout', () => {
+                buttonStart.setAlpha(1);
+            });
+            buttonStart.on('pointerdown', () => {
+                click.play();
+                floor = 6;
+                this.scene.start('playScene');
+            });
+
+            let buttonLevel = this.add.image(65, 214, 'buttonLevel').setOrigin(0).setInteractive();
+            buttonLevel.on('pointerover', () => {
+                buttonLevel.setAlpha(0.8);
+            });
+            buttonLevel.on('pointerout', () => {
+                buttonLevel.setAlpha(1);
+            });
+            buttonLevel.on('pointerdown', () => {
+                click.play();
+                buttonStart.setScale(0);
+                buttonLevel.setScale(0);
+                buttonCredits.setScale(0);
+                buttonBack.setScale(0.9);
+            });
+            
+            let buttonCredits = this.add.image(65, 262, 'buttonCredits').setOrigin(0).setInteractive();
+            buttonCredits.on('pointerover', () => {
+                buttonCredits.setAlpha(0.8);
+            });
+            buttonCredits.on('pointerout', () => {
+                buttonCredits.setAlpha(1);
+            });
+            buttonCredits.on('pointerdown', () => {
+                click.play();
+                credits.setAlpha(1);
+                buttonStart.setScale(0);
+                buttonLevel.setScale(0);
+                buttonCredits.setScale(0);
+                buttonBack.setScale(0.9);
+            });
+
+            let buttonBack = this.add.image(80, 280, 'buttonBack').setOrigin(0).setInteractive().setScale(0);
+            buttonBack.on('pointerover', () => {
+                buttonBack.setAlpha(0.8);
+            });
+            buttonBack.on('pointerout', () => {
+                buttonBack.setAlpha(1);
+            });
+            buttonBack.on('pointerdown', () => {
+                click.play();
+                credits.setAlpha(0);
+                buttonStart.setScale(1);
+                buttonLevel.setScale(1);
+                buttonCredits.setScale(1);
+                buttonBack.setScale(0);
+            });
         });
-
-        floor = 3;
-    }
-
-    update(){
-        if (Phaser.Input.Keyboard.JustDown(keyENTER)) {
-            this.scene.start("playScene");
-        }
     }
 }

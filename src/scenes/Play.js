@@ -19,6 +19,7 @@ class Play extends Phaser.Scene {
         this.load.image('instructions_3', './assets/instructions_3.png');
         this.load.image('instructions_4', './assets/instructions_4.png');
         this.load.image('instructions_5', './assets/instructions_5.png');
+        this.load.image('instructions_6', './assets/instructions_6.png');
         this.load.image('grab', './assets/grab_outline.png');
         this.load.image('pause', './assets/pause.png');
 
@@ -38,6 +39,8 @@ class Play extends Phaser.Scene {
         this.load.image('floor_4_img', './assets/floor_4.png');
         this.load.tilemapCSV('floor_5', './assets/floor_5.csv');
         this.load.image('floor_5_img', './assets/floor_5.png');
+        this.load.tilemapCSV('floor_6', './assets/floor_6.csv');
+        this.load.image('floor_6_img', './assets/floor_6.png');
 
         this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
 
@@ -72,15 +75,10 @@ class Play extends Phaser.Scene {
 
         this.locked_walls = this.physics.add.group();
         this.laser_walls = this.physics.add.group();
-        this.lasers = this.physics.add.group();
         this.lasersD = this.physics.add.group();
         this.lasersL = this.physics.add.group();
         this.lasersR = this.physics.add.group();
         this.lasersU = this.physics.add.group();
-        this.lasers.add(this.lasersD);
-        this.lasers.add(this.lasersL);
-        this.lasers.add(this.lasersR);
-        this.lasers.add(this.lasersU);
         
         for (var i = 0; i < game.config.width; i += 32) {
             for (var j = 0; j < game.config.height; j += 32) {
@@ -264,19 +262,26 @@ class Play extends Phaser.Scene {
             this.block2 = this.physics.add.sprite(32*1, 32*2, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
         }
-        if (floor == 4) {
+        if (floor === 4) {
             this.goal = 3;
             this.player = this.physics.add.sprite(32*9, 32*4, 'player').play('downIdle');
             this.block1 = this.physics.add.sprite(32*9, 32*7, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*3, 32*8, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*18, 32*7, 'block_b').play({key: 'glow_b', startFrame: 0});
         }
-        if (floor == 5) {
+        if (floor === 5) {
             this.goal = 2;
             this.player = this.physics.add.sprite(32*5, 32*5, 'player').play('sideIdle');
             this.block1 = this.physics.add.sprite(32*2, 32*3, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*17, 32*3, 'block_b').play({key: 'glow_b', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*0, 32*0, 'block_a').play({key: 'glow_a', startFrame: 0}).setAlpha(0);
+        }
+        if (floor === 6) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*2, 32*7, 'player').play('sideIdle');
+            this.block1 = this.physics.add.sprite(32*2, 32*2, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*2, 32*3, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*2, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
         }
 
         this.player.setSize(32, 32).setOffset(0, 32).setOrigin(0, 0.5);
@@ -326,6 +331,34 @@ class Play extends Phaser.Scene {
         for (const wall of this.laser_walls.getChildren()) {
             if (wall.texture.key === 'laser_wall_D') {
                 for (var i = wall.y + 32; i < game.config.height - 32; i += 32) {
+                    if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
+                        break;
+                    }
+                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laser').setOrigin(0).setDepth(i/32));
+                }
+            }
+
+            if (wall.texture.key === 'laser_wall_L') {
+                for (var i = wall.x - 32; i > 32; i -= 32) {
+                    console.log(i/32);
+                    if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
+                        break;
+                    }
+                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laser').setOrigin(0).setDepth(wall.y/32).setAngle(90));
+                }
+            }
+
+            if (wall.texture.key === 'laser_wall_R') {
+                for (var i = wall.x + 32; i < game.config.width - 32; i += 32) {
+                    if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
+                        break;
+                    }
+                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laser').setOrigin(0).setDepth(wall.y/32).setAngle(90));
+                }
+            }
+
+            if (wall.texture.key === 'laser_wall_U') {
+                for (var i = wall.y - 32; i > 32; i -= 32) {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
