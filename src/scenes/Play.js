@@ -21,6 +21,7 @@ class Play extends Phaser.Scene {
         this.load.image('instructions_4', './assets/instructions_4.png');
         this.load.image('instructions_5', './assets/instructions_5.png');
         this.load.image('instructions_6', './assets/instructions_6.png');
+        this.load.image('instructions_7', './assets/instructions_7.png');
         this.load.image('grab', './assets/grab_outline.png');
         this.load.image('pause', './assets/pause.png');
 
@@ -42,6 +43,8 @@ class Play extends Phaser.Scene {
         this.load.image('floor_5_img', './assets/floor_5.png');
         this.load.tilemapCSV('floor_6', './assets/floor_6.csv');
         this.load.image('floor_6_img', './assets/floor_6.png');
+        this.load.tilemapCSV('floor_7', './assets/floor_7.csv');
+        this.load.image('floor_7_img', './assets/floor_7.png');
 
         this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
 
@@ -281,6 +284,14 @@ class Play extends Phaser.Scene {
             this.block2 = this.physics.add.sprite(32*2, 32*3, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*2, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
         }
+        if (floor === 7) {
+            this.goal = 1;
+            this.player = this.physics.add.sprite(32*4, 32*4, 'player').play('sideIdle');
+            this.player.flipX = true;
+            this.block1 = this.physics.add.sprite(32*2, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block2 = this.physics.add.sprite(32*2, 32*5, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.block3 = this.physics.add.sprite(32*14, 32*1, 'block_a').play({key: 'glow_a', startFrame: 0});
+        }
 
         this.player.setSize(32, 32).setOffset(0, 32).setOrigin(0, 0.5);
         this.player.grab = false;
@@ -355,7 +366,7 @@ class Play extends Phaser.Scene {
             }
 
             if (wall.texture.key === 'laser_wall_U') {
-                for (var i = wall.y - 32; i > 32; i -= 32) {
+                for (var i = wall.y - 32; i >= 32; i -= 32) {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
@@ -553,6 +564,29 @@ class Play extends Phaser.Scene {
             this.locked_walls.setAlpha(1);
         }
 
+        if (this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 75) {
+            
+            this.tweens.add ({
+                targets: [this.player],
+                alpha: 0,
+                x: this.player.x + 10,
+                duration: 1500,
+                ease: 'Power1'
+            });
+            if (!this.gameOver) {
+                this.tweens.add ({
+                    targets: [this.add.rectangle(0, 0, game.config.width, game.config.height, 0xFFFFFF).setOrigin(0).setAlpha(0).setDepth(15)],
+                    alpha: 1,
+                    duration: 1500,
+                    ease: 'Power1'
+                });
+                this.gameOver = true;
+            }
+            this.time.delayedCall(1500, () => {
+                this.scene.start('victoryScene');
+            });
+        }
+
         if (this.goal === this.block1.anims.currentFrame.index + this.block2.anims.currentFrame.index + this.block3.anims.currentFrame.index - 3) {
             this.gameOver = true;
             if (bgm.volume === 1) {
@@ -564,11 +598,7 @@ class Play extends Phaser.Scene {
             }
             this.time.delayedCall(3000, () => {
                 floor++;
-                if (floor === end) {
-                    this.scene.start('victoryScene');
-                } else {
-                    this.scene.restart();
-                }
+                this.scene.restart();
             });
         }
 

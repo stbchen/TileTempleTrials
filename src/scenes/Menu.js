@@ -31,7 +31,7 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-         floor = 6;
+         floor = 7;
          this.scene.start('playScene');
 
         let framerate = 12;
