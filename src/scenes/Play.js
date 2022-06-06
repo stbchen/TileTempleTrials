@@ -470,12 +470,14 @@ class Play extends Phaser.Scene {
             this.layer.getTileAtWorldXY(this.block2.x, this.block2.y).index === 70 ||
             this.layer.getTileAtWorldXY(this.block3.x, this.block3.y).index === 70) {
             if (!this.unlocked) {
+                this.cameras.main.shake(250, 0.005);
                 this.door_open_sfx.play();
             }
             this.unlocked = true;
             this.locked_walls.setAlpha(0);
         } else {
             if (this.unlocked) {
+                this.cameras.main.shake(250, 0.005);
                 this.door_open_sfx.play();
             }
             this.unlocked = false;

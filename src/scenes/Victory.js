@@ -8,7 +8,7 @@ class Victory extends Phaser.Scene {
     }
 
     create() {
-        floor = 1;
+        bgm.stop();
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.menuimg = this.add.image(0, 0, 'victory').setOrigin(0, 0);
     }
