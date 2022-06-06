@@ -385,11 +385,11 @@ class Play extends Phaser.Scene {
             if ((laser.x === this.block1.x && laser.y >= this.block1.y) ||
                 (laser.x === this.block2.x && laser.y >= this.block2.y) ||
                 (laser.x === this.block3.x && laser.y >= this.block3.y)) {
-                laser.setAlpha(0);
+                laser.setScale(0);
             } else {
-                laser.setAlpha(1);
+                laser.setScale(1);
             }
-            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+            if (laser.scale === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
                 this.player_death('laser');
             }
         }
@@ -398,11 +398,11 @@ class Play extends Phaser.Scene {
             if ((laser.x <= this.block1.x && laser.y === this.block1.y) ||
                 (laser.x <= this.block2.x && laser.y === this.block2.y) ||
                 (laser.x <= this.block3.x && laser.y === this.block3.y)) {
-                laser.setAlpha(0);
+                laser.setScale(0);
             } else {
-                laser.setAlpha(1);
+                laser.setScale(1);
             }
-            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+            if (laser.scale === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
                 this.player_death('laser');
             }
         }
@@ -411,11 +411,11 @@ class Play extends Phaser.Scene {
             if ((laser.x >= this.block1.x && laser.y === this.block1.y) ||
                 (laser.x >= this.block2.x && laser.y === this.block2.y) ||
                 (laser.x >= this.block3.x && laser.y === this.block3.y)) {
-                laser.setAlpha(0);
+                laser.setScale(0);
             } else {
-                laser.setAlpha(1);
+                laser.setScale(1);
             }
-            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+            if (laser.scale === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
                 this.player_death('laser');
             }
         }
@@ -424,11 +424,11 @@ class Play extends Phaser.Scene {
             if ((laser.x === this.block1.x && laser.y <= this.block1.y) ||
                 (laser.x === this.block2.x && laser.y <= this.block2.y) ||
                 (laser.x === this.block3.x && laser.y <= this.block3.y)) {
-                laser.setAlpha(0);
+                laser.setScale(0);
             } else {
-                laser.setAlpha(1);
+                laser.setScale(1);
             }
-            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+            if (laser.scale === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
                 this.player_death('laser');
             }
         }

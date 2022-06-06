@@ -21,6 +21,15 @@ class Menu extends Phaser.Scene {
         this.load.image('buttonCredits', './assets/menuButtonCredits.png');
         this.load.image('buttonBack', './assets/menuButtonBack.png');
 
+        this.load.image('button1', './assets/menuButton1.png');
+        this.load.image('button2', './assets/menuButton2.png');
+        this.load.image('button3', './assets/menuButton3.png');
+        this.load.image('button4', './assets/menuButton4.png');
+        this.load.image('button5', './assets/menuButton5.png');
+        this.load.image('button6', './assets/menuButton6.png');
+        this.load.image('button7', './assets/menuButton7.png');
+        this.load.image('button8', './assets/menuButton8.png');
+
         this.load.image('credits', './assets/menuCredits.png');
 
         this.load.audio('bgm', './assets/bgm.mp3');
@@ -31,9 +40,6 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-         floor = 7;
-         this.scene.start('playScene');
-
         let framerate = 12;
 
         this.anims.create({
@@ -80,7 +86,7 @@ class Menu extends Phaser.Scene {
         let rumble2 = this.sound.add('rumble2').setLoop(false);
         let slam = this.sound.add('slam').setLoop(false);
         let click = this.sound.add('click').setLoop(false);
-        //rumble.play({volume: 0.5});
+        rumble.play({volume: 0.5});
 
         let debris1 = this.add.image(0, game.config.height, 'debris1').setOrigin(0);
         let debris2 = this.add.image(0, game.config.height, 'debris2').setOrigin(0);
@@ -192,7 +198,16 @@ class Menu extends Phaser.Scene {
         this.time.delayedCall(4100, () => {
             bgm.play({volume: 0.25});
 
-            let credits = this.add.image(5, 30, 'credits').setOrigin(0).setScale(0.9).setAlpha(0);
+            let credits = this.add.image(5, 28, 'credits').setOrigin(0).setScale(0.9).setAlpha(0);
+            let levelButtonGroup = this.physics.add.group();
+            for (let i = 1; i <= 8; i++) {
+                if (i <= 4) {
+                    levelButtonGroup.add(this.add.image(50 * i, 170, 'button' + i).setOrigin(0).setInteractive().setScale(0));
+                } else {
+                    levelButtonGroup.add(this.add.image(50 * (i - 4), 220, 'button' + i).setOrigin(0).setInteractive().setScale(0));
+                }
+            }
+            let levelButtons = levelButtonGroup.getChildren();
 
             let buttonStart = this.add.sprite(65, 166, 'buttonStart').setOrigin(0).setInteractive();
             buttonStart.on('pointerover', () => {
@@ -219,7 +234,10 @@ class Menu extends Phaser.Scene {
                 buttonStart.setScale(0);
                 buttonLevel.setScale(0);
                 buttonCredits.setScale(0);
-                buttonBack.setScale(0.9);
+                for (const button of levelButtons) {
+                    button.setScale(1);
+                }
+                buttonBack.setScale(1);
             });
             
             let buttonCredits = this.add.image(65, 262, 'buttonCredits').setOrigin(0).setInteractive();
@@ -235,10 +253,10 @@ class Menu extends Phaser.Scene {
                 buttonStart.setScale(0);
                 buttonLevel.setScale(0);
                 buttonCredits.setScale(0);
-                buttonBack.setScale(0.9);
+                buttonBack.setScale(1);
             });
 
-            let buttonBack = this.add.image(80, 280, 'buttonBack').setOrigin(0).setInteractive().setScale(0);
+            let buttonBack = this.add.image(10, 277, 'buttonBack').setOrigin(0).setInteractive().setScale(0);
             buttonBack.on('pointerover', () => {
                 buttonBack.setAlpha(0.8);
             });
@@ -248,11 +266,29 @@ class Menu extends Phaser.Scene {
             buttonBack.on('pointerdown', () => {
                 click.play();
                 credits.setAlpha(0);
+                for (const button of levelButtons) {
+                    button.setScale(0);
+                }
                 buttonStart.setScale(1);
                 buttonLevel.setScale(1);
                 buttonCredits.setScale(1);
                 buttonBack.setScale(0);
             });
+
+            for (const button of levelButtons) {
+                button.on('pointerover', () => {
+                    button.setAlpha(0.8);
+                });
+                button.on('pointerout', () => {
+                    button.setAlpha(1);
+                });
+                button.on('pointerdown', () => {
+                    click.play();
+                    floor = button.texture.key.substring(6) - 1;
+                    this.scene.start('playScene');
+                });
+            }
+
         });
     }
 }
