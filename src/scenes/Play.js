@@ -10,7 +10,8 @@ class Play extends Phaser.Scene {
         this.load.image('laser_wall_L', './assets/wall_laser_L.png');
         this.load.image('laser_wall_R', './assets/wall_laser_R.png');
         this.load.image('laser_wall_U', './assets/wall_laser_U.png');
-        this.load.image('laser', './assets/laser.png');        
+        this.load.image('laserV', './assets/laserV.png');
+        this.load.image('laserH', './assets/laserH.png');
 
         this.load.image('cracked_tile', './assets/cracked_tile.png');
         this.load.image('instructions_0', './assets/instructions_0.png');
@@ -46,10 +47,9 @@ class Play extends Phaser.Scene {
 
         this.load.audio('sfx_step', './assets/step.mp3');
         this.load.audio('sfx_push', './assets/push.mp3');
-        this.load.audio('sfx_click', './assets/click.mp3');
+        this.load.audio('sfx_click', './assets/slam.mp3');
         this.load.audio('sfx_spike', './assets/spike.wav');
         this.load.audio('sfx_door_open', './assets/door_open.mp3');
-        //this.load.audio('sfx_door_close', './assets/door_close.wav');
         this.load.audio('sfx_blockfall', './assets/fall.mp3');
         this.load.audio('sfx_laser', './assets/zap.mp3');
 
@@ -61,8 +61,8 @@ class Play extends Phaser.Scene {
         this.goal = 0;
         this.gameOver = true;
         this.unlocked = false;
+
         // Load map
-        
         this.map = this.make.tilemap({key: 'floor_' + floor, tileWidth: 32, tileHeight: 32});
         this.tileset = this.map.addTilesetImage('tileset', null, 32, 32, 0, 0);
         this.layer = this.map.createLayer(0, this.tileset, 0, 0);
@@ -102,8 +102,6 @@ class Play extends Phaser.Scene {
                 }
             }
         }
-
-        //this.instructions = this.add.text(10, game.config.height - 50, 'Use WASD to move\nHold SHIFT while moving to push or pull block\nPress ESC to return to main menu', {fill: "#0349fc", backgroundColor: "#e67607"});
 
         // Add controls
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -334,17 +332,16 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
-                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laser').setOrigin(0).setDepth(i/32));
+                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laserV').setOrigin(0).setDepth(i/32));
                 }
             }
 
             if (wall.texture.key === 'laser_wall_L') {
-                for (var i = wall.x - 32; i > 32; i -= 32) {
-                    console.log(i/32);
+                for (var i = wall.x - 32; i >= 32; i -= 32) {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
                         break;
                     }
-                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laser').setOrigin(0).setDepth(wall.y/32).setAngle(90));
+                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laserH').setOrigin(0).setDepth(wall.y/32));
                 }
             }
 
@@ -353,7 +350,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
                         break;
                     }
-                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laser').setOrigin(0).setDepth(wall.y/32).setAngle(90));
+                    this.lasersR.add(this.physics.add.image(i, wall.y, 'laserH').setOrigin(0).setDepth(wall.y/32));
                 }
             }
 
@@ -362,7 +359,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
-                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laser').setOrigin(0).setDepth(i/32));
+                    this.lasersU.add(this.physics.add.image(wall.x, i, 'laserV').setOrigin(0).setDepth(i/32));
                 }
             }
         }
@@ -384,7 +381,46 @@ class Play extends Phaser.Scene {
             if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
                 this.player_death('laser');
             }
-        }            
+        }
+        
+        for (const laser of this.lasersL.getChildren()) {
+            if ((laser.x <= this.block1.x && laser.y === this.block1.y) ||
+                (laser.x <= this.block2.x && laser.y === this.block2.y) ||
+                (laser.x <= this.block3.x && laser.y === this.block3.y)) {
+                laser.setAlpha(0);
+            } else {
+                laser.setAlpha(1);
+            }
+            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+                this.player_death('laser');
+            }
+        }
+
+        for (const laser of this.lasersR.getChildren()) {
+            if ((laser.x >= this.block1.x && laser.y === this.block1.y) ||
+                (laser.x >= this.block2.x && laser.y === this.block2.y) ||
+                (laser.x >= this.block3.x && laser.y === this.block3.y)) {
+                laser.setAlpha(0);
+            } else {
+                laser.setAlpha(1);
+            }
+            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+                this.player_death('laser');
+            }
+        }
+
+        for (const laser of this.lasersU.getChildren()) {
+            if ((laser.x === this.block1.x && laser.y <= this.block1.y) ||
+                (laser.x === this.block2.x && laser.y <= this.block2.y) ||
+                (laser.x === this.block3.x && laser.y <= this.block3.y)) {
+                laser.setAlpha(0);
+            } else {
+                laser.setAlpha(1);
+            }
+            if (laser.alpha === 1 && (this.player.x === laser.x && this.player.y === laser.y) && (this.player.x % 32 === 0 && this.player.y % 32 === 0)) {
+                this.player_death('laser');
+            }
+        }
     
         //checking for hazards
         if (this.player.x % 32 === 0 && this.player.y % 32 === 0 &&

@@ -31,7 +31,8 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+         floor = 6;
+         this.scene.start('playScene');
 
         let framerate = 12;
 
@@ -79,7 +80,7 @@ class Menu extends Phaser.Scene {
         let rumble2 = this.sound.add('rumble2').setLoop(false);
         let slam = this.sound.add('slam').setLoop(false);
         let click = this.sound.add('click').setLoop(false);
-        rumble.play({volume: 0.5});
+        //rumble.play({volume: 0.5});
 
         let debris1 = this.add.image(0, game.config.height, 'debris1').setOrigin(0);
         let debris2 = this.add.image(0, game.config.height, 'debris2').setOrigin(0);
@@ -202,7 +203,7 @@ class Menu extends Phaser.Scene {
             });
             buttonStart.on('pointerdown', () => {
                 click.play();
-                floor = 6;
+                floor = 0;
                 this.scene.start('playScene');
             });
 
