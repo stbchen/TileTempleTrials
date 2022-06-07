@@ -5,6 +5,8 @@ class Victory extends Phaser.Scene {
 
     preload(){
         this.load.image('bg', './assets/menuBG.png');
+        this.load.image('text1', './assets/victoryText1.png');
+        this.load.image('text2', './assets/victoryText2.png');
         this.load.spritesheet('victory', './assets/victory.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 1});
     }
 
@@ -35,6 +37,26 @@ class Victory extends Phaser.Scene {
             alpha: 0.5,
             duration: 750,
             ease: 'Sine.easeOut'
+        });
+
+        this.time.delayedCall(500, () => {
+            this.tweens.add({
+                targets: [this.add.image(-50, 10, 'text1').setOrigin(0).setAlpha(0)],
+                alpha: 1,
+                x: 20,
+                duration: 750,
+                ease: 'Sine.easeOut'
+            });
+        });
+
+        this.time.delayedCall(750, () => {
+            this.tweens.add({
+                targets: [this.add.image(-50, -10, 'text2').setOrigin(0).setAlpha(0)],
+                alpha: 1,
+                x: 20,
+                duration: 750,
+                ease: 'Sine.easeOut'
+            });
         });
     }
 

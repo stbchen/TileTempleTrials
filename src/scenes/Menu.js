@@ -40,7 +40,6 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-        //this.scene.start('victoryScene');
         let framerate = 12;
 
         this.anims.create({

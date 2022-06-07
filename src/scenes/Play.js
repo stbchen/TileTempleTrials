@@ -121,7 +121,7 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'downIdle',
                 start: 0,
-                end: 0,
+                end: 1,
                 zeroPad: 1
             }),
             frameRate: 4,
@@ -143,11 +143,11 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'downGrab',
                 start: 0,
-                end: 0,
+                end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
-            repeat: -1
+            frameRate: 8,
+            repeat: 0
         });
 
         // Up
@@ -156,7 +156,7 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'upIdle',
                 start: 0,
-                end: 0,
+                end: 1,
                 zeroPad: 1
             }),
             frameRate: 4,
@@ -178,11 +178,11 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'upGrab',
                 start: 0,
-                end: 0,
+                end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
-            repeat: -1
+            frameRate: 8,
+            repeat: 0
         });
 
         // Side
@@ -191,7 +191,7 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'sideIdle',
                 start: 0,
-                end: 0,
+                end: 1,
                 zeroPad: 1
             }),
             frameRate: 4,
@@ -213,10 +213,10 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNames('player', {
                 prefix: 'sideGrab',
                 start: 0,
-                end: 0,
+                end: 3,
                 zeroPad: 1
             }),
-            frameRate: 4,
+            frameRate: 8,
             repeat: 0
         });
 
@@ -287,7 +287,6 @@ class Play extends Phaser.Scene {
         if (floor === 7) {
             this.goal = 1;
             this.player = this.physics.add.sprite(32*4, 32*4, 'player').play('sideIdle');
-            this.player.flipX = true;
             this.block1 = this.physics.add.sprite(32*2, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*2, 32*5, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*14, 32*1, 'block_a').play({key: 'glow_a', startFrame: 0});
@@ -788,7 +787,12 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     y: this.player.y - 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power2'
+                    ease: 'Power2',
+                    onComplete: () => {
+                        if (this.player.anims.currentAnim.key == 'upWalk') {
+                            this.player.play('upIdle');
+                        }
+                    }
                 });
             }
         }
@@ -863,7 +867,12 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     x: this.player.x - 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power2'
+                    ease: 'Power2',
+                    onComplete: () => {
+                        if (this.player.anims.currentAnim.key == 'sideWalk') {
+                            this.player.play('sideIdle');
+                        }
+                    }
                 });
             }
         }
@@ -934,7 +943,12 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     y: this.player.y + 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power2'
+                    ease: 'Power2',
+                    onComplete: () => {
+                        if (this.player.anims.currentAnim.key == 'downWalk') {
+                            this.player.play('downIdle');
+                        }
+                    }
                 });
             }
         }
@@ -1009,7 +1023,12 @@ class Play extends Phaser.Scene {
                     targets: [this.player],
                     x: this.player.x + 32,
                     duration: this.player.moveSpeed,
-                    ease: 'Power2'
+                    ease: 'Power2',
+                    onComplete: () => {
+                        if (this.player.anims.currentAnim.key == 'sideWalk') {
+                            this.player.play('sideIdle');
+                        }
+                    }
                 });
             }
         }        
