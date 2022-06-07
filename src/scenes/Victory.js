@@ -4,10 +4,10 @@ class Victory extends Phaser.Scene {
     }
 
     preload(){
-        this.load.image('bg', './assets/menuBG.png');
-        this.load.image('text1', './assets/victoryText1.png');
-        this.load.image('text2', './assets/victoryText2.png');
-        this.load.spritesheet('victory', './assets/victory.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 1});
+        this.load.image('bg', './assets/menu/menuBG.png');
+        this.load.image('text1', './assets/menu/victoryText1.png');
+        this.load.image('text2', './assets/menu/victoryText2.png');
+        this.load.spritesheet('victory', './assets/menu/victory.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 1});
     }
 
     create() {

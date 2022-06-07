@@ -4,57 +4,57 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('wall', './assets/wall.png');
-        this.load.image('locked_wall', './assets/wall_locked.png');
-        this.load.image('laser_wall_D', './assets/wall_laser_D.png');
-        this.load.image('laser_wall_L', './assets/wall_laser_L.png');
-        this.load.image('laser_wall_R', './assets/wall_laser_R.png');
-        this.load.image('laser_wall_U', './assets/wall_laser_U.png');
-        this.load.image('laserV', './assets/laserV.png');
-        this.load.image('laserH', './assets/laserH.png');
+        this.load.image('wall', './assets/gameplay/wall.png');
+        this.load.image('locked_wall', './assets/gameplay/wall_locked.png');
+        this.load.image('laser_wall_D', './assets/gameplay/wall_laser_D.png');
+        this.load.image('laser_wall_L', './assets/gameplay/wall_laser_L.png');
+        this.load.image('laser_wall_R', './assets/gameplay/wall_laser_R.png');
+        this.load.image('laser_wall_U', './assets/gameplay/wall_laser_U.png');
+        this.load.image('laserV', './assets/gameplay/laserV.png');
+        this.load.image('laserH', './assets/gameplay/laserH.png');
 
-        this.load.image('cracked_tile', './assets/cracked_tile.png');
-        this.load.image('instructions_0', './assets/instructions_0.png');
-        this.load.image('instructions_1', './assets/instructions_1.png');
-        this.load.image('instructions_2', './assets/instructions_2.png');
-        this.load.image('instructions_3', './assets/instructions_3.png');
-        this.load.image('instructions_4', './assets/instructions_4.png');
-        this.load.image('instructions_5', './assets/instructions_5.png');
-        this.load.image('instructions_6', './assets/instructions_6.png');
-        this.load.image('instructions_7', './assets/instructions_7.png');
-        this.load.image('grab', './assets/grab_outline.png');
-        this.load.image('pause', './assets/pause.png');
+        this.load.image('cracked_tile', './assets/gameplay/cracked_tile.png');
+        this.load.image('instructions_0', './assets/gameplay/instructions_0.png');
+        this.load.image('instructions_1', './assets/gameplay/instructions_1.png');
+        this.load.image('instructions_2', './assets/gameplay/instructions_2.png');
+        this.load.image('instructions_3', './assets/gameplay/instructions_3.png');
+        this.load.image('instructions_4', './assets/gameplay/instructions_4.png');
+        this.load.image('instructions_5', './assets/gameplay/instructions_5.png');
+        this.load.image('instructions_6', './assets/gameplay/instructions_6.png');
+        this.load.image('instructions_7', './assets/gameplay/instructions_7.png');
+        this.load.image('grab', './assets/gameplay/grab_outline.png');
+        this.load.image('pause', './assets/gameplay/pause.png');
 
-        this.load.spritesheet('block_a', './assets/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
-        this.load.spritesheet('block_b', './assets/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
+        this.load.spritesheet('block_a', './assets/gameplay/block_a.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
+        this.load.spritesheet('block_b', './assets/gameplay/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
 
-        this.load.image('tileset', './assets/tileset.png');
-        this.load.tilemapCSV('floor_0', './assets/floor_0.csv');
-        this.load.image('floor_0_img', './assets/floor_0.png');
-        this.load.tilemapCSV('floor_1', './assets/floor_1.csv');
-        this.load.image('floor_1_img', './assets/floor_1.png');
-        this.load.tilemapCSV('floor_2', './assets/floor_2.csv');
-        this.load.image('floor_2_img', './assets/floor_2.png');
-        this.load.tilemapCSV('floor_3', './assets/floor_3.csv');
-        this.load.image('floor_3_img', './assets/floor_3.png');
-        this.load.tilemapCSV('floor_4', './assets/floor_4.csv');
-        this.load.image('floor_4_img', './assets/floor_4.png');
-        this.load.tilemapCSV('floor_5', './assets/floor_5.csv');
-        this.load.image('floor_5_img', './assets/floor_5.png');
-        this.load.tilemapCSV('floor_6', './assets/floor_6.csv');
-        this.load.image('floor_6_img', './assets/floor_6.png');
-        this.load.tilemapCSV('floor_7', './assets/floor_7.csv');
-        this.load.image('floor_7_img', './assets/floor_7.png');
+        this.load.image('tileset', './assets/floors/tileset.png');
+        this.load.tilemapCSV('floor_0', './assets/floors/floor_0.csv');
+        this.load.image('floor_0_img', './assets/floors/floor_0.png');
+        this.load.tilemapCSV('floor_1', './assets/floors/floor_1.csv');
+        this.load.image('floor_1_img', './assets/floors/floor_1.png');
+        this.load.tilemapCSV('floor_2', './assets/floors/floor_2.csv');
+        this.load.image('floor_2_img', './assets/floors/floor_2.png');
+        this.load.tilemapCSV('floor_3', './assets/floors/floor_3.csv');
+        this.load.image('floor_3_img', './assets/floors/floor_3.png');
+        this.load.tilemapCSV('floor_4', './assets/floors/floor_4.csv');
+        this.load.image('floor_4_img', './assets/floors/floor_4.png');
+        this.load.tilemapCSV('floor_5', './assets/floors/floor_5.csv');
+        this.load.image('floor_5_img', './assets/floors/floor_5.png');
+        this.load.tilemapCSV('floor_6', './assets/floors/floor_6.csv');
+        this.load.image('floor_6_img', './assets/floors/floor_6.png');
+        this.load.tilemapCSV('floor_7', './assets/floors/floor_7.csv');
+        this.load.image('floor_7_img', './assets/floors/floor_7.png');
 
-        this.load.atlas('player', './assets/player_atlas.png', './assets/player_atlas.json');
+        this.load.atlas('player', './assets/gameplay/player_atlas.png', './assets/gameplay/player_atlas.json');
 
-        this.load.audio('sfx_step', './assets/step.mp3');
-        this.load.audio('sfx_push', './assets/push.mp3');
-        this.load.audio('sfx_click', './assets/slam.mp3');
-        this.load.audio('sfx_spike', './assets/spike.wav');
-        this.load.audio('sfx_door_open', './assets/door_open.mp3');
-        this.load.audio('sfx_blockfall', './assets/fall.mp3');
-        this.load.audio('sfx_laser', './assets/zap.mp3');
+        this.load.audio('sfx_step', './assets/audio/step.mp3');
+        this.load.audio('sfx_push', './assets/audio/push.mp3');
+        this.load.audio('sfx_click', './assets/audio/slam.mp3');
+        this.load.audio('sfx_spike', './assets/audio/spike.wav');
+        this.load.audio('sfx_door_open', './assets/audio/door_open.mp3');
+        this.load.audio('sfx_blockfall', './assets/audio/fall.mp3');
+        this.load.audio('sfx_laser', './assets/audio/zap.mp3');
 
     }
 

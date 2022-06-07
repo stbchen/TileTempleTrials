@@ -4,39 +4,39 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('block1', './assets/menuBlock1.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
-        this.load.spritesheet('block2', './assets/menuBlock2.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
-        this.load.spritesheet('block3', './assets/menuBlock3.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
-        this.load.spritesheet('cube', './assets/menuCube.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
-        this.load.spritesheet('temple', './assets/menuTemple.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
-        this.load.image('debris1', './assets/menuDebris1.png');
-        this.load.image('debris2', './assets/menuDebris2.png');
-        this.load.image('bg', './assets/menuBG.png');
-        this.load.image('logo1', './assets/menuLogo1.png');
-        this.load.image('logo2', './assets/menuLogo2.png');
-        this.load.image('logo3', './assets/menuLogo3.png');
+        this.load.spritesheet('block1', './assets/menu/menuBlock1.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('block2', './assets/menu/menuBlock2.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('block3', './assets/menu/menuBlock3.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('cube', './assets/menu/menuCube.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('temple', './assets/menu/menuTemple.png', {frameWidth: 640, frameHeight: 320, startFrame: 0, endFrame: 3});
+        this.load.image('debris1', './assets/menu/menuDebris1.png');
+        this.load.image('debris2', './assets/menu/menuDebris2.png');
+        this.load.image('bg', './assets/menu/menuBG.png');
+        this.load.image('logo1', './assets/menu/menuLogo1.png');
+        this.load.image('logo2', './assets/menu/menuLogo2.png');
+        this.load.image('logo3', './assets/menu/menuLogo3.png');
 
-        this.load.image('buttonStart', './assets/menuButtonStart.png');
-        this.load.image('buttonLevel', './assets/menuButtonLevel.png');
-        this.load.image('buttonCredits', './assets/menuButtonCredits.png');
-        this.load.image('buttonBack', './assets/menuButtonBack.png');
+        this.load.image('buttonStart', './assets/menu/menuButtonStart.png');
+        this.load.image('buttonLevel', './assets/menu/menuButtonLevel.png');
+        this.load.image('buttonCredits', './assets/menu/menuButtonCredits.png');
+        this.load.image('buttonBack', './assets/menu/menuButtonBack.png');
 
-        this.load.image('button1', './assets/menuButton1.png');
-        this.load.image('button2', './assets/menuButton2.png');
-        this.load.image('button3', './assets/menuButton3.png');
-        this.load.image('button4', './assets/menuButton4.png');
-        this.load.image('button5', './assets/menuButton5.png');
-        this.load.image('button6', './assets/menuButton6.png');
-        this.load.image('button7', './assets/menuButton7.png');
-        this.load.image('button8', './assets/menuButton8.png');
+        this.load.image('button1', './assets/menu/menuButton1.png');
+        this.load.image('button2', './assets/menu/menuButton2.png');
+        this.load.image('button3', './assets/menu/menuButton3.png');
+        this.load.image('button4', './assets/menu/menuButton4.png');
+        this.load.image('button5', './assets/menu/menuButton5.png');
+        this.load.image('button6', './assets/menu/menuButton6.png');
+        this.load.image('button7', './assets/menu/menuButton7.png');
+        this.load.image('button8', './assets/menu/menuButton8.png');
 
-        this.load.image('credits', './assets/menuCredits.png');
+        this.load.image('credits', './assets/menu/menuCredits.png');
 
-        this.load.audio('bgm', './assets/bgm.mp3');
-        this.load.audio('rumble', './assets/rumble.mp3');
-        this.load.audio('rumble2', './assets/fall.mp3');
-        this.load.audio('slam', './assets/slam.mp3');
-        this.load.audio('click', './assets/click.mp3');
+        this.load.audio('bgm', './assets/audio/bgm.mp3');
+        this.load.audio('rumble', './assets/audio/rumble.mp3');
+        this.load.audio('rumble2', './assets/audio/fall.mp3');
+        this.load.audio('slam', './assets/audio/slam.mp3');
+        this.load.audio('click', './assets/audio/click.mp3');
     }
 
     create() {
