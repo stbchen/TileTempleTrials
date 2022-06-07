@@ -286,8 +286,8 @@ class Play extends Phaser.Scene {
         }
         if (floor === 7) {
             this.goal = 1;
-            this.player = this.physics.add.sprite(32*4, 32*4, 'player').play('sideIdle');
-            this.block1 = this.physics.add.sprite(32*2, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
+            this.player = this.physics.add.sprite(32*3, 32*4, 'player').play('sideIdle');
+            this.block1 = this.physics.add.sprite(32*1, 32*4, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block2 = this.physics.add.sprite(32*2, 32*5, 'block_a').play({key: 'glow_a', startFrame: 0});
             this.block3 = this.physics.add.sprite(32*14, 32*1, 'block_a').play({key: 'glow_a', startFrame: 0});
         }
