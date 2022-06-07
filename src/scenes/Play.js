@@ -29,22 +29,22 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('block_b', './assets/gameplay/block_b.png', {frameWidth: 32, frameHeight: 48, startFrame: 0, endFrame: 1});
 
         this.load.image('tileset', './assets/floors/tileset.png');
-        this.load.tilemapCSV('floor_0', './assets/floors/floor_0.csv');
-        this.load.image('floor_0_img', './assets/floors/floor_0.png');
-        this.load.tilemapCSV('floor_1', './assets/floors/floor_1.csv');
-        this.load.image('floor_1_img', './assets/floors/floor_1.png');
-        this.load.tilemapCSV('floor_2', './assets/floors/floor_2.csv');
-        this.load.image('floor_2_img', './assets/floors/floor_2.png');
-        this.load.tilemapCSV('floor_3', './assets/floors/floor_3.csv');
-        this.load.image('floor_3_img', './assets/floors/floor_3.png');
-        this.load.tilemapCSV('floor_4', './assets/floors/floor_4.csv');
-        this.load.image('floor_4_img', './assets/floors/floor_4.png');
-        this.load.tilemapCSV('floor_5', './assets/floors/floor_5.csv');
-        this.load.image('floor_5_img', './assets/floors/floor_5.png');
-        this.load.tilemapCSV('floor_6', './assets/floors/floor_6.csv');
-        this.load.image('floor_6_img', './assets/floors/floor_6.png');
-        this.load.tilemapCSV('floor_7', './assets/floors/floor_7.csv');
-        this.load.image('floor_7_img', './assets/floors/floor_7.png');
+        this.load.tilemapCSV('floor_0', './assets/gameplay/floor_0.csv');
+        this.load.image('floor_0_img', './assets/gameplay/floor_0.png');
+        this.load.tilemapCSV('floor_1', './assets/gameplay/floor_1.csv');
+        this.load.image('floor_1_img', './assets/gameplay/floor_1.png');
+        this.load.tilemapCSV('floor_2', './assets/gameplay/floor_2.csv');
+        this.load.image('floor_2_img', './assets/gameplay/floor_2.png');
+        this.load.tilemapCSV('floor_3', './assets/gameplay/floor_3.csv');
+        this.load.image('floor_3_img', './assets/gameplay/floor_3.png');
+        this.load.tilemapCSV('floor_4', './assets/gameplay/floor_4.csv');
+        this.load.image('floor_4_img', './assets/gameplay/floor_4.png');
+        this.load.tilemapCSV('floor_5', './assets/gameplay/floor_5.csv');
+        this.load.image('floor_5_img', './assets/gameplay/floor_5.png');
+        this.load.tilemapCSV('floor_6', './assets/gameplay/floor_6.csv');
+        this.load.image('floor_6_img', './assets/gameplay/floor_6.png');
+        this.load.tilemapCSV('floor_7', './assets/gameplay/floor_7.csv');
+        this.load.image('floor_7_img', './assets/gameplay/floor_7.png');
 
         this.load.atlas('player', './assets/gameplay/player_atlas.png', './assets/gameplay/player_atlas.json');
 
