@@ -564,7 +564,6 @@ class Play extends Phaser.Scene {
         }
 
         if (this.layer.getTileAtWorldXY(this.player.x, this.player.y).index === 75) {
-            
             this.tweens.add ({
                 targets: [this.player],
                 alpha: 0,
@@ -581,6 +580,11 @@ class Play extends Phaser.Scene {
                 });
                 this.gameOver = true;
             }
+            this.tweens.add({
+                targets: [bgm],
+                volume: 0,
+                duration: 1500
+            });
             this.time.delayedCall(1500, () => {
                 this.scene.start('victoryScene');
             });
