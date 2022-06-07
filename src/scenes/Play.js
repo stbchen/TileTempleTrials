@@ -10,8 +10,8 @@ class Play extends Phaser.Scene {
         this.load.image('laser_wall_L', './assets/gameplay/wall_laser_L.png');
         this.load.image('laser_wall_R', './assets/gameplay/wall_laser_R.png');
         this.load.image('laser_wall_U', './assets/gameplay/wall_laser_U.png');
-        this.load.image('laserV', './assets/gameplay/laserV.png');
-        this.load.image('laserH', './assets/gameplay/laserH.png');
+        this.load.spritesheet('laserV', './assets/gameplay/laserV.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
+        this.load.spritesheet('laserH', './assets/gameplay/laserH.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
 
         this.load.image('cracked_tile', './assets/gameplay/cracked_tile.png');
         this.load.image('instructions_0', './assets/gameplay/instructions_0.png');
@@ -233,6 +233,20 @@ class Play extends Phaser.Scene {
             frameRate: 0,
             repeat: 0
         });
+
+        this.anims.create({
+            key: 'laserV_anim',
+            frames: this.anims.generateFrameNumbers('laserV', {start: 0, end: 7, first: 0}),
+            frameRate: 24,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'laserH_anim',
+            frames: this.anims.generateFrameNumbers('laserH', {start: 0, end: 7, first: 0}),
+            frameRate: 24,
+            repeat: -1
+        });
         
         // Floor-specific setup
         if (floor === 0) {
@@ -342,7 +356,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
-                    this.lasersD.add(this.physics.add.image(wall.x, i, 'laserV').setOrigin(0).setDepth(i/32));
+                    this.lasersD.add(this.physics.add.sprite(wall.x, i, 'laserV').setOrigin(0).setDepth(i/32).play('laserV_anim'));
                 }
             }
 
@@ -351,7 +365,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
                         break;
                     }
-                    this.lasersL.add(this.physics.add.image(i, wall.y, 'laserH').setOrigin(0).setDepth(wall.y/32));
+                    this.lasersL.add(this.physics.add.sprite(i, wall.y, 'laserH').setOrigin(0).setDepth(wall.y/32).play('laserH_anim'));
                 }
             }
 
@@ -360,7 +374,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(i, wall.y).index)) {
                         break;
                     }
-                    this.lasersR.add(this.physics.add.image(i, wall.y, 'laserH').setOrigin(0).setDepth(wall.y/32));
+                    this.lasersR.add(this.physics.add.sprite(i, wall.y, 'laserH').setOrigin(1).setAngle(180).setDepth(wall.y/32).play('laserH_anim'));
                 }
             }
 
@@ -369,7 +383,7 @@ class Play extends Phaser.Scene {
                     if (this.wallIDs.includes(this.layer.getTileAtWorldXY(wall.x, i).index)) {
                         break;
                     }
-                    this.lasersU.add(this.physics.add.image(wall.x, i, 'laserV').setOrigin(0).setDepth(i/32));
+                    this.lasersU.add(this.physics.add.sprite(wall.x, i, 'laserV').setOrigin(1).setAngle(180).setDepth(i/32).play('laserV_anim'));
                 }
             }
         }
